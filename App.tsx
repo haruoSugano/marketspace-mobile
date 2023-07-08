@@ -3,6 +3,8 @@ import { useFonts, Karla_400Regular, Karla_700Bold } from "@expo-google-fonts/ka
 
 import { Home } from "@screens/Home";
 import { THEME } from "./src/theme";
+import { SignIn } from "@screens/SignIn";
+import { SignUp } from "@screens/SignUp";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
@@ -14,7 +16,7 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      {fontsLoaded ? <Home /> : <Home />}
+      {fontsLoaded ? <SignUp /> : <SignUp />}
     </NativeBaseProvider>
   );
 }

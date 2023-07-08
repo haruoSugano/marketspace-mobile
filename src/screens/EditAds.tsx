@@ -1,10 +1,10 @@
 import { Center, Text, VStack } from "native-base";
 
-export function Home() {
+export function EditAds() {
     return (
         <VStack>
             <Center>
-                <Text backgroundColor="blue.100">HOME</Text>
+                <Text backgroundColor="blue.100">EditAds</Text>
             </Center>
         </VStack>
     );
