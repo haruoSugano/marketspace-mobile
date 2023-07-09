@@ -1,6 +1,6 @@
-import { Box, IInputProps, Icon, Input as NativeBaseInput, Pressable } from "native-base";
+import { IInputProps, Input as NativeBaseInput, Pressable } from "native-base";
 
-import { Eye } from "phosphor-react-native";
+import { Eye, EyeSlash } from "phosphor-react-native";
 import { useState } from "react";
 
 type Props = IInputProps & {
@@ -30,13 +30,15 @@ export function InputPassword({ ...rest }: Props) {
                 borderWidth: 1,
                 borderColor: "gray.400"
             }}
-            type={ show ? "text" : "password"}
+            type={show ? "text" : "password"}
             InputRightElement={
                 <Pressable
                     mr={4}
                     onPress={() => setShow(!show)}
                 >
-                    <Eye />
+                    {
+                        show ? <Eye /> : <EyeSlash />
+                    }
                 </Pressable>
             }
             {...rest}

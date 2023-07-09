@@ -1,4 +1,4 @@
-import { ScrollView, Text, VStack, Image, Center } from "native-base";
+import { ScrollView, Text, VStack, Center } from "native-base";
 
 import LogoImg from "@assets/logo.svg";
 import { Input } from "@components/Input";
