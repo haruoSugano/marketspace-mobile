@@ -1,11 +1,10 @@
-import { Center, Text, VStack } from "native-base";
+import { Center, HStack, Text, VStack } from "native-base";
 
 export function Home() {
     return (
         <VStack>
-            <Center>
-                <Text backgroundColor="blue.100">HOME</Text>
-            </Center>
+            <HStack>
+            </HStack>
         </VStack>
     );
 }
