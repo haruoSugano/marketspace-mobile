@@ -6,7 +6,7 @@ import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
 export function HomeHeader() {
     return (
-        <HStack pt={16} pb={5} px={6} alignItems="center">
+        <HStack alignItems="center" mb={8}>
             <UserPhoto
                 source={defaultUserPhotoImg}
                 alt="User photo"

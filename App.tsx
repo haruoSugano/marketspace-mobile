@@ -2,7 +2,7 @@ import { NativeBaseProvider, StatusBar } from "native-base";
 import { useFonts, Karla_400Regular, Karla_700Bold } from "@expo-google-fonts/karla";
 
 import { Home } from "@screens/Home";
-import { THEME } from "./src/theme";
+import { THEME } from "@theme/index";
 import { SignIn } from "@screens/SignIn";
 import { SignUp } from "@screens/SignUp";
 import { Routes } from "@routes/index";
