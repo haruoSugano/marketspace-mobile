@@ -12,7 +12,7 @@ export function HomeSell() {
             width="full"
             bg="blueGray.200"
             _pressed={{
-                bg: "blueGray.100"
+                bg: "gray.400"
             }}
         >
             <HStack alignItems="center">

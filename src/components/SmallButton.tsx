@@ -6,10 +6,10 @@ type Props = IButtonProps & {
     textColor?: string;
 }
 
-export function Button({ title, bgColor, textColor }: Props) {
+export function SmallButton({ title, bgColor, textColor}: Props) {
     return (
         <ButtonNative
-            w="full"
+            w="45%"
             h={12}
             mt={8}
             bg={bgColor}

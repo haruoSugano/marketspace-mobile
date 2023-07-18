@@ -24,7 +24,15 @@ export function HomeHeader() {
                 </Heading>
             </VStack>
 
-            <ButtonNative ml={8} bg="gray.100" width={135} height={45}>
+            <ButtonNative
+                ml={8}
+                bg="gray.100"
+                width={135}
+                height={45}
+                _pressed={{
+                    bg: "gray.400"
+                }}
+            >
                 <HStack alignItems="center">
                     <Plus color="white" size={18} />
                     <Text color="white" ml={1} fontFamily="heading">
