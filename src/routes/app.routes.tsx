@@ -7,13 +7,13 @@ import { House, Tag, SignOut } from "phosphor-react-native";
 import { Home } from "@screens/Home";
 import { MyAds } from "@screens/MyAds";
 import { SignIn } from "@screens/SignIn";
-import { DetailMyAds } from "@screens/DetailMyAds";
+import { DetailsAds } from "@screens/DetailsAds";
 
 type AppRoutes = {
     home: undefined;
     myAds: undefined;
     signIn: undefined;
-    detailMyAds: undefined;
+    detailsAds: undefined;
 }
 
 export type AppNavigatorRoutesApp = BottomTabNavigationProp<AppRoutes>;
@@ -72,8 +72,8 @@ export function AppRoutes() {
             />
 
             <Screen
-                name="detailMyAds"
-                component={DetailMyAds}
+                name="detailsAds"
+                component={DetailsAds}
                 options={{
                     tabBarStyle: { display: "none" },
                     tabBarButton: () => null

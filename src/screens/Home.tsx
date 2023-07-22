@@ -103,7 +103,7 @@ export function Home() {
     ]);
 
     function handleNavigateDetailMyAds() {
-        navigation.navigate("detailMyAds");
+        navigation.navigate("detailsAds");
     }
 
     return (

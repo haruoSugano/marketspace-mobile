@@ -21,7 +21,7 @@ type FormPaymentProps = {
     type: string;
 }
 
-export function DetailMyAds() {
+export function DetailsAds() {
     const [productImages, setProductImages] = useState<Props[]>([
         {
             id: "1",
