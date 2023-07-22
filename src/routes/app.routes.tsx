@@ -7,11 +7,13 @@ import { House, Tag, SignOut } from "phosphor-react-native";
 import { Home } from "@screens/Home";
 import { MyAds } from "@screens/MyAds";
 import { SignIn } from "@screens/SignIn";
+import { DetailMyAds } from "@screens/DetailMyAds";
 
 type AppRoutes = {
     home: undefined;
     myAds: undefined;
     signIn: undefined;
+    detailMyAds: undefined;
 }
 
 export type AppNavigatorRoutesApp = BottomTabNavigationProp<AppRoutes>;
@@ -44,7 +46,7 @@ export function AppRoutes() {
                 component={Home}
                 options={{
                     tabBarIcon: ({ color }) => (
-                        <House color={color}/>
+                        <House color={color} />
                     )
                 }}
             />
@@ -54,7 +56,7 @@ export function AppRoutes() {
                 component={MyAds}
                 options={{
                     tabBarIcon: ({ color }) => (
-                        <Tag color={color}/>
+                        <Tag color={color} />
                     )
                 }}
             />
@@ -64,8 +66,17 @@ export function AppRoutes() {
                 component={SignIn}
                 options={{
                     tabBarIcon: ({ color }) => (
-                        <SignOut color={color}/>
+                        <SignOut color={color} />
                     )
+                }}
+            />
+
+            <Screen
+                name="detailMyAds"
+                component={DetailMyAds}
+                options={{
+                    tabBarStyle: { display: "none" },
+                    tabBarButton: () => null
                 }}
             />
         </Navigator>

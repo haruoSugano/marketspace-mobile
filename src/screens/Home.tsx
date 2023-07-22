@@ -1,5 +1,6 @@
 import { Box, HStack, Input as NativeBaseInput, Text, FlatList, VStack, Modal, Heading, Pressable, Switch, Checkbox } from "native-base";
 import { TouchableOpacity, ImageSourcePropType } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { MagnifyingGlass, Sliders } from "phosphor-react-native";
 
@@ -8,11 +9,11 @@ import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
 import { HomeHeader } from "@components/HomeHeader";
 import { HomeSell } from "@components/HomeSell";
-import { UserPhoto } from "@components/UserPhoto";
 import { Item } from "@components/Item";
 import { useState } from "react";
 import { Condition } from "@components/Condition";
 import { SmallButton } from "@components/SmallButton";
+import { AppNavigatorRoutesApp } from "@routes/app.routes";
 
 type props = {
     name: string;
@@ -27,6 +28,7 @@ export function Home() {
     const [isNewModal, setIsNewModal] = useState(false);
     const [isUsedModal, setIsUsedModal] = useState(false);
     const [paymentSelected, setPaymentSelected] = useState(["Boleto", "Depósito Bancário"]);
+    const navigation = useNavigation<AppNavigatorRoutesApp>();
     const [products, setProducts] = useState<props[]>([
         {
             name: "tenis vermelho",
@@ -100,6 +102,10 @@ export function Home() {
         },
     ]);
 
+    function handleNavigateDetailMyAds() {
+        navigation.navigate("detailMyAds");
+    }
+
     return (
         <VStack pt={16} pb={5} px={6}>
             <HomeHeader />
@@ -137,6 +143,7 @@ export function Home() {
                     </HStack>
                 }
             />
+
             <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="full">
                 <Modal.Content height="70%" marginTop="auto" borderTopRadius={30}>
                     <Modal.Body ml={2} mr={2} mt={5}>
@@ -252,23 +259,29 @@ export function Home() {
                     </Modal.Body>
                 </Modal.Content>
             </Modal>
+
             <VStack mt={4}>
                 <FlatList
-                    contentContainerStyle={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}
+                    columnWrapperStyle={{ justifyContent: "space-between" }}
                     data={products}
                     keyExtractor={item => item.name}
                     renderItem={({ item }) => (
-                        <Item
-                            uri={defaultUserPhotoImg}
-                            name={item.name}
-                            price={item.price}
-                            is_new={item.is_new}
-                            source={item.source}
-                            alt="foto"
-                        />
+                        <Box>
+                            <TouchableOpacity onPress={handleNavigateDetailMyAds}>
+                                <Item
+                                    uri={defaultUserPhotoImg}
+                                    name={item.name}
+                                    price={item.price}
+                                    is_new={item.is_new}
+                                    source={item.source}
+                                    alt="foto"
+                                />
+                            </TouchableOpacity>
+                        </Box>
                     )}
                     maxHeight={400}
                     showsVerticalScrollIndicator={false}
+                    numColumns={2}
                 />
             </VStack>
         </VStack>

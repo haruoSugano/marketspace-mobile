@@ -11,7 +11,7 @@ type Props = IImageProps & {
 
 export function Item({ uri, price, name, is_new, ...rest }: Props) {
     return (
-        <Box width="full">
+        <Box width="full" mt={2}>
             <Image
                 w={163}
                 borderRadius={6}
