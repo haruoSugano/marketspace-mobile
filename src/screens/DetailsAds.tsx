@@ -8,6 +8,8 @@ import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 import { UserPhoto } from "@components/UserPhoto";
 import { useState } from "react";
 import { FormPayment } from "@components/FormPayment";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesApp } from "@routes/app.routes";
 
 const { width } = Dimensions.get('window');
 
@@ -22,6 +24,7 @@ type FormPaymentProps = {
 }
 
 export function DetailsAds() {
+    const navigation = useNavigation<AppNavigatorRoutesApp>();
     const [productImages, setProductImages] = useState<Props[]>([
         {
             id: "1",
@@ -60,14 +63,18 @@ export function DetailsAds() {
         },
     ]);
 
+    function handleGoHome() {
+        navigation.navigate("home");
+    }
+
     return (
         <VStack>
             <HStack p={6} mt={10}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleGoHome}>
                     <ArrowLeft />
                 </TouchableOpacity>
             </HStack>
-
+j
             <FlatList
                 data={productImages}
                 renderItem={({ item }) => (

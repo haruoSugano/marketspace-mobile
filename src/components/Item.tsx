@@ -3,13 +3,13 @@ import { UserPhoto } from "./UserPhoto";
 import { ImageSourcePropType } from "react-native";
 
 type Props = IImageProps & {
-    uri: ImageSourcePropType
+    uri: ImageSourcePropType | null
     price: number;
     name: string;
     is_new: boolean;
 }
 
-export function Item({ uri, price, name, is_new, ...rest }: Props) {
+export function Item({ uri = null, price, name, is_new, ...rest }: Props) {
     return (
         <Box width="full" mt={2}>
             <Image
@@ -17,13 +17,16 @@ export function Item({ uri, price, name, is_new, ...rest }: Props) {
                 borderRadius={6}
                 {...rest}
             />
-            <HStack position="absolute" alignItems="center" mt={1} ml={1}>
-                <UserPhoto
-                    source={uri}
-                    alt="User photo"
-                    size={7}
-                    mr={16}
-                />
+            <HStack position="absolute" mt={1} ml={uri === null ? 24 : 1}>
+                {
+                    uri !== null ?
+                        <UserPhoto
+                            source={uri}
+                            alt="User photo"
+                            size={7}
+                            mr={16}
+                        /> : null
+                }
 
                 <Box
                     width={16}
@@ -31,7 +34,6 @@ export function Item({ uri, price, name, is_new, ...rest }: Props) {
                     bg={is_new ? "blue.light" : "gray.300"}
                     alignItems="center"
                     borderRadius={10}
-                    alignContent="flex-end"
                 >
                     <Text fontFamily="heading" fontSize="sm" color="white">{is_new ? "NOVO" : "USADO"}</Text>
                 </Box>

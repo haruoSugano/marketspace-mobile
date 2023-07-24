@@ -2,8 +2,16 @@ import { HStack, Pressable, Button as ButtonNativeBase, Heading, VStack, Text, B
 import { THEME } from "@theme/index";
 
 import { Tag, ArrowRight } from "phosphor-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesApp } from "@routes/app.routes";
 
 export function HomeSell() {
+    const navigation = useNavigation<AppNavigatorRoutesApp>();
+
+    function handleGoMyAds() {
+        navigation.navigate("myAds");
+    }
+
     return (
         <ButtonNativeBase
             pl={0}
@@ -14,6 +22,7 @@ export function HomeSell() {
             _pressed={{
                 bg: "gray.400"
             }}
+            onPress={handleGoMyAds}
         >
             <HStack alignItems="center">
                 <Box mr={4} >
