@@ -10,6 +10,7 @@ import { useState } from "react";
 import { FormPayment } from "@components/FormPayment";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
+import { DetailsAdsContent } from "@components/DetailsAdsContent";
 
 const { width } = Dimensions.get('window');
 
@@ -69,12 +70,12 @@ export function DetailsAds() {
 
     return (
         <VStack>
-            <HStack p={6} mt={10}>
+            <HStack p={5} mt={10}>
                 <TouchableOpacity onPress={handleGoHome}>
                     <ArrowLeft />
                 </TouchableOpacity>
             </HStack>
-j
+
             <FlatList
                 data={productImages}
                 renderItem={({ item }) => (
@@ -90,61 +91,22 @@ j
                 keyExtractor={(item, index) => index.toString()}
             />
 
-            <VStack p={5} alignContent="center">
-                <HStack>
-                    <UserPhoto
-                        source={defaultUserPhotoImg}
-                        alt="User photo"
-                        size={7}
-                        mr={2}
-                    />
+            <Box p={5}>
+                <DetailsAdsContent
+                    uriUserPhoto={defaultUserPhotoImg}
+                    name="Helio Haruo"
+                    is_new={true}
+                    product="Bicicleta"
+                    price={120.00}
+                    description="Lorem Ipsum is simply dummy text of the printing and
+                typesetting industry. Lorem Ipsum has been
+                typesetting industry. Lorem Ipsum has been
+                typesetting industry. Lorem Ipsum has been
+                typesetting industry. Lorem Ipsum has been"
+                    exchange={true}
+                />
 
-                    <Text fontFamily="heading">
-                        Helio Haruo
-                    </Text>
-                </HStack>
-
-                <Box
-                    width={12}
-                    height={5}
-                    bg="blue.light"
-                    alignItems="center"
-                    borderRadius={12}
-                    alignContent="flex-end"
-                    mt={4}
-                >
-                    <Text fontFamily="heading" fontSize="sm" color="white">NOVO</Text>
-                </Box>
-
-                <HStack mt={1} justifyContent="space-between">
-                    <Text fontFamily="heading" fontSize="lg">
-                        Bicicleta
-                    </Text>
-
-                    <Text fontFamily="heading" fontSize="lg" color="blue.light">
-                        <Text fontFamily="heading" fontSize="sm">R$</Text>
-                        120,00
-                    </Text>
-                </HStack>
-
-                <Text mt={1}>
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been
-                    typesetting industry. Lorem Ipsum has been
-                    typesetting industry. Lorem Ipsum has been
-                    typesetting industry. Lorem Ipsum has been
-                </Text>
-
-                <HStack mt={2}>
-                    <Text mr={3} fontFamily="heading">
-                        Aceita troca?
-                    </Text>
-                    <Text fontFamily="body">
-                        Sim
-                    </Text>
-                </HStack>
-
-                <Box mt={2}>
+                <VStack mt={2}>
                     <Text fontFamily="heading">
                         Meios de pagamento:
                     </Text>
@@ -157,8 +119,8 @@ j
                             />
                         )}
                     />
-                </Box>
-            </VStack>
+                </VStack>
+            </Box>
 
             <HStack
                 justifyContent="space-between"
