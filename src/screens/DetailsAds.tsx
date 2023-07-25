@@ -5,7 +5,6 @@ import { Dimensions, ImageSourcePropType, TouchableOpacity } from "react-native"
 import testeImage from "@assets/Image.png";
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
-import { UserPhoto } from "@components/UserPhoto";
 import { useState } from "react";
 import { FormPayment } from "@components/FormPayment";
 import { useNavigation } from "@react-navigation/native";
