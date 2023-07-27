@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Condition } from "@components/Condition";
 import { SmallButton } from "@components/SmallButton";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
+import { TradeAndPayment } from "@components/TradeAndPayment";
 
 type props = {
     name: string;
@@ -27,7 +28,7 @@ export function Home() {
     const [showModal, setShowModal] = useState(false);
     const [isNewModal, setIsNewModal] = useState(false);
     const [isUsedModal, setIsUsedModal] = useState(false);
-    const [paymentSelected, setPaymentSelected] = useState(["Boleto", "Depósito Bancário"]);
+    const [paymentSelected, setPaymentSelected] = useState<string[]>([]);
     const navigation = useNavigation<AppNavigatorRoutesApp>();
     const [products, setProducts] = useState<props[]>([
         {
@@ -105,6 +106,10 @@ export function Home() {
     function handleNavigateDetailMyAds() {
         navigation.navigate("detailsAds");
     }
+
+    function handlePaymentSelected(selectedPayment: string[]) {
+        setPaymentSelected(selectedPayment);
+    };
 
     return (
         <VStack pt={16} pb={5} px={6}>
@@ -209,40 +214,13 @@ export function Home() {
                                     </Box>
                                 </TouchableOpacity>
                             </HStack>
-                            <VStack alignItems="flex-start" mt={4}>
-                                <Text fontFamily="heading">
-                                    Aceita troca?
-                                </Text>
-                                <Switch size="lg" colorScheme="primary" />
-                            </VStack>
-                            <VStack>
-                                <Text fontFamily="heading" mt={3}>
-                                    Meios de pagamentos aceitos
-                                </Text>
-                                <Box mt={2}>
-                                    <Checkbox.Group
-                                        defaultValue={paymentSelected}
-                                        onChange={value => setPaymentSelected(value || [])}
-                                    >
-                                        <Checkbox value="Boleto" my={1}>
-                                            Boleto
-                                        </Checkbox>
-                                        <Checkbox value="Pix" my={1}>
-                                            Pix
-                                        </Checkbox>
-                                        <Checkbox value="Dinheiro" my={1}>
-                                            Dinheiro
-                                        </Checkbox>
-                                        <Checkbox value="Cartão de Crédito" my={1}>
-                                            Cartão de Crédito
-                                        </Checkbox>
-                                        <Checkbox value="Depósito Bancário" my={1}>
-                                            Depósito Bancário
-                                        </Checkbox>
-                                    </Checkbox.Group>
-                                </Box>
-                            </VStack>
-                            <HStack mt={4} justifyContent="space-between">
+
+                            <TradeAndPayment
+                                paymentSelected={paymentSelected}
+                                onChange={handlePaymentSelected}
+                            />
+
+                            <HStack mt={6} justifyContent="space-between">
                                 <SmallButton
                                     title="Resetar filtros"
                                     bgColor="gray.500"

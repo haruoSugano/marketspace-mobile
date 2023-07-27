@@ -9,6 +9,8 @@ import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 import { DetailsAdsContent } from "@components/DetailsAdsContent";
 import { FormPayment } from "@components/FormPayment";
 import { LargButton } from "@components/LargeButton";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesApp } from "@routes/app.routes";
 
 const { width } = Dimensions.get('window');
 
@@ -23,6 +25,7 @@ type FormPaymentProps = {
 }
 
 export function DetailsMyAds() {
+    const navigation = useNavigation<AppNavigatorRoutesApp>();
     const [productImages, setProductImages] = useState<Props[]>([
         {
             id: "1",
@@ -52,9 +55,15 @@ export function DetailsMyAds() {
         },
     ]);
 
+    function handleNavigateMyAds() {
+        navigation.navigate("myAds");
+    }
+
     return (
         <VStack>
-            <Header />
+            <Header 
+                onPress={handleNavigateMyAds}
+            />
 
             <FlatList
                 data={productImages}

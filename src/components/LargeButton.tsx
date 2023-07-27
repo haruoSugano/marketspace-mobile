@@ -13,7 +13,7 @@ export function LargButton({ bgColor, textColor, title, icon }: Props) {
         <ButtonNative
             w="full"
             h={10}
-            mt={1}
+            mt={2}
             bg={bgColor}
             rounded="sm"
             borderRadius={6}
