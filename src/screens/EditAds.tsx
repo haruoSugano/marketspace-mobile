@@ -19,6 +19,10 @@ export function EditAds() {
         navigation.navigate("myAds");
     }
 
+    function handleNavigateAdsPreview() {
+        navigation.navigate("adsPreview");
+    }
+
     function handlePaymentSelected(selectedPayment: string[]) {
         setPaymentSelected(selectedPayment);
     };
@@ -137,6 +141,7 @@ export function EditAds() {
                 />
 
                 <SmallButton
+                    onPress={handleNavigateAdsPreview}
                     title="Avançar"
                     bgColor="gray.100"
                     textColor="white"

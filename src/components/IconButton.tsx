@@ -1,18 +1,18 @@
 import { Button as ButtonNative, HStack, IButtonProps, Text } from "native-base";
-import { ArrowLeft } from "phosphor-react-native";
+import { ArrowLeft, Tag } from "phosphor-react-native";
 
 type Props = IButtonProps & {
     title: string;
     bgColor?: string;
     textColor?: string;
-    isIcon?: boolean;
+    typeIcon: "ARROW" | "TAG"
 }
 
-export function SmallButton({ title, bgColor, textColor, isIcon = false, ...rest }: Props) {
+export function IconButton({ title, bgColor, textColor, typeIcon = "ARROW", ...rest }: Props) {
     return (
         <ButtonNative
             w="45%"
-            h={12}
+            h={10}
             mt={4}
             bg={bgColor}
             rounded="sm"
@@ -26,7 +26,12 @@ export function SmallButton({ title, bgColor, textColor, isIcon = false, ...rest
                 alignItems="center"
             >
                 {
-                    isIcon ? <ArrowLeft size={18} style={{marginRight: 6}}/> : null
+                    typeIcon === "ARROW" ?
+                        <ArrowLeft size={18} style={{ marginRight: 6 }} />
+
+                        :
+
+                        <Tag size={18} color="white" style={{ marginRight: 6 }} />
                 }
                 <Text
                     color={textColor}

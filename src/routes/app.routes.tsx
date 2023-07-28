@@ -11,6 +11,7 @@ import { DetailsAds } from "@screens/DetailsAds";
 import { CreateMyAds } from "@screens/CreateMyAds";
 import { DetailsMyAds } from "@screens/DetailsMyAds";
 import { EditAds } from "@screens/EditAds";
+import { AdsPreview } from "@screens/AdsPreview";
 
 type AppRoutes = {
     home: undefined;
@@ -20,6 +21,7 @@ type AppRoutes = {
     createMyAds: undefined;
     detailsMyAds: undefined;
     editAds: undefined;
+    adsPreview: undefined;
 }
 
 export type AppNavigatorRoutesApp = BottomTabNavigationProp<AppRoutes>;
@@ -107,6 +109,15 @@ export function AppRoutes() {
             <Screen
                 name="editAds"
                 component={EditAds}
+                options={{
+                    tabBarStyle: { display: "none" },
+                    tabBarButton: () => null
+                }}
+            />
+
+            <Screen
+                name="adsPreview"
+                component={AdsPreview}
                 options={{
                     tabBarStyle: { display: "none" },
                     tabBarButton: () => null
