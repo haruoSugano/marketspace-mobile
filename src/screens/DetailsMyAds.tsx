@@ -1,7 +1,7 @@
 import { Header } from "@components/Header";
 import { useState } from "react";
-import { FlatList, VStack, Image, Box, Text } from "native-base";
-import { Dimensions, ImageSourcePropType } from "react-native";
+import { FlatList, VStack, Image, Box, Text, HStack } from "native-base";
+import { Dimensions, ImageSourcePropType, TouchableOpacity } from "react-native";
 
 import testeImage from "@assets/Image.png";
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
@@ -11,6 +11,8 @@ import { FormPayment } from "@components/FormPayment";
 import { LargButton } from "@components/LargeButton";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
+import { ArrowLeft, PencilSimpleLine } from "phosphor-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get('window');
 
@@ -59,73 +61,90 @@ export function DetailsMyAds() {
         navigation.navigate("myAds");
     }
 
+    function handleNavigateEdit() {
+        navigation.navigate("editAds");
+    }
+
     return (
-        <VStack>
-            <Header 
-                onPress={handleNavigateMyAds}
-            />
+        <SafeAreaView style={{ flex: 1 }}>
+            <VStack>
+                <HStack
+                    p={6}
+                    justifyContent={"space-between"}
+                    alignItems="center"
+                    bg="gray.600"
+                >
+                    <TouchableOpacity style={{ width: 40 }} onPress={handleNavigateMyAds}>
+                        <ArrowLeft />
+                    </TouchableOpacity>
 
-            <FlatList
-                data={productImages}
-                renderItem={({ item }) => (
-                    <Image
-                        source={item.url}
-                        alt="foto"
-                        width={width}
-                        h={210}
-                    />
-                )}
-                horizontal
-                pagingEnabled
-                keyExtractor={(item, index) => index.toString()}
-            />
+                    <TouchableOpacity style={{ width: 35 }} onPress={handleNavigateEdit}>
+                        <PencilSimpleLine />
+                    </TouchableOpacity>
+                </HStack>
 
-            <Box p={5}>
-                <DetailsAdsContent
-                    uriUserPhoto={defaultUserPhotoImg}
-                    name="Helio Haruo"
-                    is_new={true}
-                    product="Bicicleta"
-                    price={120.00}
-                    description="Lorem Ipsum is simply dummy text of the printing and
+                <FlatList
+                    data={productImages}
+                    renderItem={({ item }) => (
+                        <Image
+                            source={item.url}
+                            alt="foto"
+                            width={width}
+                            h={210}
+                        />
+                    )}
+                    horizontal
+                    pagingEnabled
+                    keyExtractor={(item, index) => index.toString()}
+                />
+
+                <Box p={5}>
+                    <DetailsAdsContent
+                        uriUserPhoto={defaultUserPhotoImg}
+                        name="Helio Haruo"
+                        is_new={true}
+                        product="Bicicleta"
+                        price={120.00}
+                        description="Lorem Ipsum is simply dummy text of the printing and
                 typesetting industry. Lorem Ipsum has been
                 typesetting industry. Lorem Ipsum has been
                 typesetting industry. Lorem Ipsum has been
                 typesetting industry. Lorem Ipsum has been"
-                    exchange={true}
-                />
-
-                <VStack mt={2}>
-                    <Text fontFamily="heading">
-                        Meios de pagamento:
-                    </Text>
-
-                    <FlatList
-                        data={formPayment}
-                        renderItem={({ item }) => (
-                            <FormPayment
-                                payment={item.type}
-                            />
-                        )}
-                    />
-                </VStack>
-
-                <Box mt={4}>
-                    <LargButton
-                        bgColor="gray.100"
-                        textColor="white"
-                        title="Desativar anúncios"
-                        icon="POWER"
+                        exchange={true}
                     />
 
-                    <LargButton
-                        bgColor="gray.500"
-                        textColor="gray.100"
-                        title="Excluir anúncio"
-                        icon="DELETE"
-                    />
+                    <VStack mt={2}>
+                        <Text fontFamily="heading">
+                            Meios de pagamento:
+                        </Text>
+
+                        <FlatList
+                            data={formPayment}
+                            renderItem={({ item }) => (
+                                <FormPayment
+                                    payment={item.type}
+                                />
+                            )}
+                        />
+                    </VStack>
+
+                    <Box mt={4}>
+                        <LargButton
+                            bgColor="gray.100"
+                            textColor="white"
+                            title="Desativar anúncios"
+                            icon="POWER"
+                        />
+
+                        <LargButton
+                            bgColor="gray.500"
+                            textColor="gray.100"
+                            title="Excluir anúncio"
+                            icon="DELETE"
+                        />
+                    </Box>
                 </Box>
-            </Box>
-        </VStack>
+            </VStack>
+        </SafeAreaView>
     );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, HStack, Input as InputNativeBase, Radio, ScrollView, Stack, Text, TextArea, VStack } from "native-base";
-import { SafeAreaView, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 import { Plus } from "phosphor-react-native";
 
@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
 import { TradeAndPayment } from "@components/TradeAndPayment";
 import { SmallButton } from "@components/SmallButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export function CreateMyAds() {
     const navigation = useNavigation<AppNavigatorRoutesApp>();
@@ -27,7 +28,6 @@ export function CreateMyAds() {
         <SafeAreaView style={{ flex: 1 }}>
             <Header
                 onPress={handleNavigateMyAds}
-                isMyAds={false}
                 title="Criar anúncio"
             />
             <ScrollView

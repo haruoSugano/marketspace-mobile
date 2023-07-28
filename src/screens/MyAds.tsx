@@ -1,4 +1,4 @@
-import { Box, CheckIcon, FlatList, HStack, Select, Text, VStack } from "native-base";
+import { Box, FlatList, HStack, Select, Text, VStack } from "native-base";
 import { Plus, CaretUp, CaretDown } from "phosphor-react-native";
 import { useState } from "react";
 import { ImageSourcePropType, TouchableOpacity } from "react-native";
@@ -6,6 +6,7 @@ import testeImage from "@assets/Image.png";
 import { Item } from "@components/Item";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
     name: string;
@@ -100,68 +101,70 @@ export function MyAds() {
     }
 
     return (
-        <VStack p={6}>
-            <HStack mt={10} justifyContent="flex-end" alignItems="center">
-                <Text fontFamily="heading" fontSize="lg" width={210} >
-                    Meus anúncios
-                </Text>
+        <SafeAreaView style={{ flex: 1 }}>
+            <VStack p={6}>
+                <HStack mt={10} justifyContent="flex-end" alignItems="center">
+                    <Text fontFamily="heading" fontSize="lg" width={210} >
+                        Meus anúncios
+                    </Text>
 
-                <TouchableOpacity style={{ width: 35 }} onPress={handleNavigateCreateMyAds}>
-                    <Plus />
-                </TouchableOpacity>
-            </HStack>
+                    <TouchableOpacity style={{ width: 35 }} onPress={handleNavigateCreateMyAds}>
+                        <Plus />
+                    </TouchableOpacity>
+                </HStack>
 
-            <HStack mt={6} justifyContent="space-between" alignItems="center">
-                <Text>
-                    9 anúncios
-                </Text>
+                <HStack mt={6} justifyContent="space-between" alignItems="center">
+                    <Text>
+                        9 anúncios
+                    </Text>
 
-                <Box>
-                    <Select
-                        selectedValue={status}
-                        minWidth={100}
-                        height={30}
-                        fontFamily="body"
-                        accessibilityLabel="Todos"
-                        placeholder="Todos"
-                        _selectedItem={{
-                            bg: "gray.500"
-                        }}
-                        onValueChange={itemValue => setStatus(itemValue)}
-                        dropdownIcon={<CaretDown size={18} />}
-                        dropdownOpenIcon={<CaretUp size={18} />}
-                    >
-                        <Select.Item label="Todos" value="Todos" />
-                        <Select.Item label="Ativos" value="Ativos" />
-                        <Select.Item label="Inativos" value="Inativos" />
-                    </Select>
-                </Box>
-            </HStack>
+                    <Box>
+                        <Select
+                            selectedValue={status}
+                            minWidth={100}
+                            height={30}
+                            fontFamily="body"
+                            accessibilityLabel="Todos"
+                            placeholder="Todos"
+                            _selectedItem={{
+                                bg: "gray.500"
+                            }}
+                            onValueChange={itemValue => setStatus(itemValue)}
+                            dropdownIcon={<CaretDown size={18} />}
+                            dropdownOpenIcon={<CaretUp size={18} />}
+                        >
+                            <Select.Item label="Todos" value="Todos" />
+                            <Select.Item label="Ativos" value="Ativos" />
+                            <Select.Item label="Inativos" value="Inativos" />
+                        </Select>
+                    </Box>
+                </HStack>
 
-            <VStack mt={4}>
-                <FlatList
-                    columnWrapperStyle={{ justifyContent: "space-between" }}
-                    data={products}
-                    keyExtractor={item => item.name}
-                    renderItem={({ item }) => (
-                        <Box>
-                            <TouchableOpacity onPress={handleNavigateDetailMyAds}>
-                                <Item
-                                    uri={item.uri}
-                                    name={item.name}
-                                    price={item.price}
-                                    is_new={item.is_new}
-                                    source={item.source}
-                                    alt="foto"
-                                />
-                            </TouchableOpacity>
-                        </Box>
-                    )}
-                    maxHeight={600}
-                    showsVerticalScrollIndicator={false}
-                    numColumns={2}
-                />
+                <VStack mt={4}>
+                    <FlatList
+                        columnWrapperStyle={{ justifyContent: "space-between" }}
+                        data={products}
+                        keyExtractor={item => item.name}
+                        renderItem={({ item }) => (
+                            <Box>
+                                <TouchableOpacity onPress={handleNavigateDetailMyAds}>
+                                    <Item
+                                        uri={item.uri}
+                                        name={item.name}
+                                        price={item.price}
+                                        is_new={item.is_new}
+                                        source={item.source}
+                                        alt="foto"
+                                    />
+                                </TouchableOpacity>
+                            </Box>
+                        )}
+                        maxHeight={540}
+                        showsVerticalScrollIndicator={false}
+                        numColumns={2}
+                    />
+                </VStack>
             </VStack>
-        </VStack>
+        </SafeAreaView>
     );
 }

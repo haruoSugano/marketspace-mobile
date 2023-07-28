@@ -1,6 +1,7 @@
 import { Box, Button, FlatList, HStack, Image, Text, VStack } from "native-base";
 import { ArrowLeft, WhatsappLogo } from "phosphor-react-native";
 import { Dimensions, ImageSourcePropType, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import testeImage from "@assets/Image.png";
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
@@ -68,87 +69,89 @@ export function DetailsAds() {
     }
 
     return (
-        <VStack>
-            <HStack p={5} mt={10}>
-                <TouchableOpacity onPress={handleGoHome}>
-                    <ArrowLeft />
-                </TouchableOpacity>
-            </HStack>
+        <SafeAreaView style={{ flex: 1 }}>
+            <VStack>
+                <HStack p={5}>
+                    <TouchableOpacity onPress={handleGoHome}>
+                        <ArrowLeft />
+                    </TouchableOpacity>
+                </HStack>
 
-            <FlatList
-                data={productImages}
-                renderItem={({ item }) => (
-                    <Image
-                        source={item.url}
-                        alt="foto"
-                        width={width}
-                        h={210}
-                    />
-                )}
-                horizontal
-                pagingEnabled
-                keyExtractor={(item, index) => index.toString()}
-            />
+                <FlatList
+                    data={productImages}
+                    renderItem={({ item }) => (
+                        <Image
+                            source={item.url}
+                            alt="foto"
+                            width={width}
+                            h={210}
+                        />
+                    )}
+                    horizontal
+                    pagingEnabled
+                    keyExtractor={(item, index) => index.toString()}
+                />
 
-            <Box p={5}>
-                <DetailsAdsContent
-                    uriUserPhoto={defaultUserPhotoImg}
-                    name="Helio Haruo"
-                    is_new={true}
-                    product="Bicicleta"
-                    price={120.00}
-                    description="Lorem Ipsum is simply dummy text of the printing and
+                <Box p={5}>
+                    <DetailsAdsContent
+                        uriUserPhoto={defaultUserPhotoImg}
+                        name="Helio Haruo"
+                        is_new={true}
+                        product="Bicicleta"
+                        price={120.00}
+                        description="Lorem Ipsum is simply dummy text of the printing and
                 typesetting industry. Lorem Ipsum has been
                 typesetting industry. Lorem Ipsum has been
                 typesetting industry. Lorem Ipsum has been
                 typesetting industry. Lorem Ipsum has been"
-                    exchange={true}
-                />
-
-                <VStack mt={2}>
-                    <Text fontFamily="heading">
-                        Meios de pagamento:
-                    </Text>
-
-                    <FlatList
-                        data={formPayment}
-                        renderItem={({ item }) => (
-                            <FormPayment
-                                payment={item.type}
-                            />
-                        )}
+                        exchange={true}
                     />
-                </VStack>
-            </Box>
 
-            <HStack
-                justifyContent="space-between"
-                alignItems="center"
-                alignSelf="center"
-                bg="white"
-                height="8%"
-                width="full"
-                p={4}
-            >
-                <HStack alignItems="center" alignSelf="center">
-                    <Text fontFamily="heading" fontSize="sm" mr={1}>
-                        R$
-                    </Text>
+                    <VStack mt={2}>
+                        <Text fontFamily="heading">
+                            Meios de pagamento:
+                        </Text>
 
-                    <Text fontSize="lg" fontFamily="heading">
-                        120,00
-                    </Text>
-                </HStack>
+                        <FlatList
+                            data={formPayment}
+                            renderItem={({ item }) => (
+                                <FormPayment
+                                    payment={item.type}
+                                />
+                            )}
+                        />
+                    </VStack>
+                </Box>
 
-                <Button height={9} width={150}>
-                    <HStack alignItems="center">
-                        <WhatsappLogo color="white" size={18} />
-                        <Text color="white" ml={1}>
-                            Entrar em contato
+                <HStack
+                    justifyContent="space-between"
+                    alignItems="center"
+                    alignSelf="center"
+                    bg="white"
+                    height="8%"
+                    width="full"
+                    p={4}
+                >
+                    <HStack alignItems="center" alignSelf="center">
+                        <Text fontFamily="heading" fontSize="sm" mr={1}>
+                            R$
+                        </Text>
+
+                        <Text fontSize="lg" fontFamily="heading">
+                            120,00
                         </Text>
                     </HStack>
-                </Button>
-            </HStack>
-        </VStack>
+
+                    <Button height={9} width={150}>
+                        <HStack alignItems="center">
+                            <WhatsappLogo color="white" size={18} />
+                            <Text color="white" ml={1}>
+                                Entrar em contato
+                            </Text>
+                        </HStack>
+                    </Button>
+                </HStack>
+            </VStack>
+        </SafeAreaView>
     );
 }
