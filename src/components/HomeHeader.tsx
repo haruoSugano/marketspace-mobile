@@ -15,7 +15,7 @@ export function HomeHeader() {
     }
     
     return (
-        <HStack alignItems="center" mb={8}>
+        <HStack alignItems="center" mb={4}>
             <UserPhoto
                 source={defaultUserPhotoImg}
                 alt="User photo"

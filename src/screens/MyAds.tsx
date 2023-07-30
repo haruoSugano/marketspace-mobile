@@ -1,7 +1,7 @@
 import { Box, FlatList, HStack, Select, Text, VStack } from "native-base";
 import { Plus, CaretUp, CaretDown } from "phosphor-react-native";
 import { useState } from "react";
-import { ImageSourcePropType, TouchableOpacity } from "react-native";
+import { ImageSourcePropType, Platform, TouchableOpacity } from "react-native";
 import testeImage from "@assets/Image.png";
 import { Item } from "@components/Item";
 import { useNavigation } from "@react-navigation/native";
@@ -103,7 +103,7 @@ export function MyAds() {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <VStack p={6}>
-                <HStack mt={10} justifyContent="flex-end" alignItems="center">
+                <HStack mt={5} justifyContent="flex-end" alignItems="center">
                     <Text fontFamily="heading" fontSize="lg" width={210} >
                         Meus anúncios
                     </Text>
@@ -159,7 +159,7 @@ export function MyAds() {
                                 </TouchableOpacity>
                             </Box>
                         )}
-                        maxHeight={540}
+                        maxHeight={Platform.OS === "android" ? 540 : 430}
                         showsVerticalScrollIndicator={false}
                         numColumns={2}
                     />

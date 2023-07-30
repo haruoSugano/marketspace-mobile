@@ -10,7 +10,6 @@ export function Header({ title, ...rest }: Props) {
     return (
         <HStack
             p={6}
-            mt={12}
             justifyContent="flex-start"
             alignItems="center"
             bg="gray.600"

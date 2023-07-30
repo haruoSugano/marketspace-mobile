@@ -1,6 +1,6 @@
 import { Box, Image, HStack, Text, VStack, IImageProps } from "native-base";
 import { UserPhoto } from "./UserPhoto";
-import { ImageSourcePropType } from "react-native";
+import { ImageSourcePropType, Platform } from "react-native";
 
 type Props = IImageProps & {
     uri: ImageSourcePropType | null
@@ -13,7 +13,7 @@ export function Item({ uri = null, price, name, is_new, ...rest }: Props) {
     return (
         <Box width="full" mt={2}>
             <Image
-                w={163}
+                w={Platform.OS === "android" ? 163 : 160}
                 borderRadius={6}
                 {...rest}
             />

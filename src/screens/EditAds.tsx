@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Input as InputNativeBase, HStack, Text, VStack, TextArea, Box, Radio, Stack, ScrollView } from "native-base";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
 import { Plus } from "phosphor-react-native";
-import { TouchableOpacity } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Header } from "@components/Header";
@@ -26,7 +26,7 @@ export function EditAds() {
     function handlePaymentSelected(selectedPayment: string[]) {
         setPaymentSelected(selectedPayment);
     };
-    
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Header
@@ -74,7 +74,9 @@ export function EditAds() {
                             Sobre o produto
                         </Text>
 
-                        <InputNativeBase />
+                        <InputNativeBase 
+                            placeholder="Título do anúncio"
+                        />
 
                         <TextArea
                             autoCompleteType={false}
@@ -114,7 +116,9 @@ export function EditAds() {
                                 Venda
                             </Text>
 
-                            <InputNativeBase />
+                            <InputNativeBase
+                                placeholder="Valor do Produto"
+                            />
 
                             <TradeAndPayment
                                 paymentSelected={paymentSelected}
@@ -130,7 +134,7 @@ export function EditAds() {
                 pl={6}
                 pr={6}
                 w="full"
-                h="10%"
+                h={Platform.OS === "android" ? "10%" : 70}
                 justifyContent="space-between"
             >
                 <SmallButton

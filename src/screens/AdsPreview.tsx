@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dimensions, ImageSourcePropType } from "react-native";
+import { Dimensions, ImageSourcePropType, Platform } from "react-native";
 import { Center, Text, VStack, Image, FlatList, Box, HStack, ScrollView } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -98,7 +98,11 @@ export function AdsPreview() {
                     mt={3}
                 />
 
-                <Box p={5} bg="gray.600">
+                <ScrollView
+                    p={6}
+                    h={Platform.OS === "android" ? "50%" : "42%"}
+                    bg="white"
+                >
                     <DetailsAdsContent
                         uriUserPhoto={defaultUserPhotoImg}
                         name="Helio Haruo"
@@ -106,30 +110,28 @@ export function AdsPreview() {
                         product="Bicicleta"
                         price={120.00}
                         description="Lorem Ipsum is simply dummy text of the printing and
-                                        typesetting industry. Lorem Ipsum has been
-                                        typesetting industry. Lorem Ipsum has been
-                                        typesetting industry. Lorem Ipsum has been
-                                        typesetting industry. Lorem Ipsum has been"
+                                    typesetting industry. Lorem Ipsum has been
+                                    typesetting industry. Lorem Ipsum has been
+                                    typesetting industry. Lorem Ipsum has been
+                                    typesetting industry. Lorem Ipsum has been"
                         exchange={true}
                     />
 
-                    <VStack mt={2}>
-                        <Text fontFamily="heading" mb={2}>
+                    <VStack mt={1} mb={8}>
+                        <Text fontFamily="heading">
                             Meios de pagamento:
                         </Text>
-
-                        <FlatList
-                            data={formPayment}
-                            renderItem={({ item }) => (
-                                <FormPayment
-                                    payment={item.type}
-                                />
-                            )}
-                            showsVerticalScrollIndicator={false}
-                            h={95}
-                        />
+                        <Box>
+                            {
+                                formPayment.map((typePayment) => {
+                                    return <FormPayment
+                                        payment={typePayment.type}
+                                    />
+                                })
+                            }
+                        </Box>
                     </VStack>
-                </Box>
+                </ScrollView>
 
                 <HStack
                     bg="white"

@@ -1,5 +1,5 @@
 import { Box, HStack, Input as NativeBaseInput, Text, FlatList, VStack, Modal, Heading, Pressable, Switch, Checkbox } from "native-base";
-import { TouchableOpacity, ImageSourcePropType } from "react-native";
+import { TouchableOpacity, ImageSourcePropType, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -114,7 +114,7 @@ export function Home() {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <VStack pt={16} pb={5} px={6}>
+            <VStack pt={6} pb={4} px={6}>
                 <HomeHeader />
 
                 <Text fontFamily="body" fontSize="sm" color="gray.200">
@@ -123,7 +123,7 @@ export function Home() {
 
                 <HomeSell />
 
-                <Text mt={6}>
+                <Text mt={4}>
                     Compre produtos variados
                 </Text>
                 <NativeBaseInput
@@ -152,7 +152,7 @@ export function Home() {
                 />
 
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="full">
-                    <Modal.Content height="70%" marginTop="auto" borderTopRadius={30}>
+                    <Modal.Content height={Platform.OS === "android" ? "70%" : "85%"} marginTop="auto" borderTopRadius={30}>
                         <Modal.Body ml={2} mr={2} mt={5}>
                             <Heading fontFamily="heading">
                                 Filtrar anúncios
@@ -259,7 +259,7 @@ export function Home() {
                                 </TouchableOpacity>
                             </Box>
                         )}
-                        maxHeight={340}
+                        maxHeight={Platform.OS === "android" ? 420 : 270}
                         showsVerticalScrollIndicator={false}
                         numColumns={2}
                     />

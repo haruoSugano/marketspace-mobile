@@ -5,13 +5,13 @@ type Props = IButtonProps & {
     title: string;
     bgColor?: string;
     textColor?: string;
-    typeIcon: "ARROW" | "TAG"
+    typeIcon: "ARROW" | "TAG";
 }
 
 export function IconButton({ title, bgColor, textColor, typeIcon = "ARROW", ...rest }: Props) {
     return (
         <ButtonNative
-            w="45%"
+            w="48%"
             h={10}
             mt={4}
             bg={bgColor}
@@ -20,18 +20,19 @@ export function IconButton({ title, bgColor, textColor, typeIcon = "ARROW", ...r
             _pressed={{
                 bg: "gray.400"
             }}
+            justifyContent="center"
+            alignItems="center"
             {...rest}
         >
             <HStack
-                alignItems="center"
             >
                 {
                     typeIcon === "ARROW" ?
-                        <ArrowLeft size={18} style={{ marginRight: 6 }} />
+                        <ArrowLeft size={18} style={{ marginRight: 6, marginTop: 4 }} />
 
                         :
 
-                        <Tag size={18} color="white" style={{ marginRight: 6 }} />
+                        <Tag size={18} color="white" style={{ marginRight: 6, marginTop: 4 }} />
                 }
                 <Text
                     color={textColor}

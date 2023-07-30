@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, HStack, Input as InputNativeBase, Radio, ScrollView, Stack, Text, TextArea, VStack } from "native-base";
-import { TouchableOpacity } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
 
 import { Plus } from "phosphor-react-native";
 
@@ -131,7 +131,7 @@ export function CreateMyAds() {
                 pl={6}
                 pr={6}
                 w="full"
-                h="10%"
+                h={Platform.OS === "android" ? "10%" : 70}
                 justifyContent="space-between"
             >
                 <SmallButton

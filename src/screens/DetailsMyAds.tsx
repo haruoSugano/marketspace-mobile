@@ -1,7 +1,6 @@
-import { Header } from "@components/Header";
 import { useState } from "react";
-import { FlatList, VStack, Image, Box, Text, HStack } from "native-base";
-import { Dimensions, ImageSourcePropType, TouchableOpacity } from "react-native";
+import { FlatList, VStack, Image, Box, Text, HStack, ScrollView } from "native-base";
+import { Dimensions, ImageSourcePropType, Platform, TouchableOpacity } from "react-native";
 
 import testeImage from "@assets/Image.png";
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
@@ -69,7 +68,10 @@ export function DetailsMyAds() {
         <SafeAreaView style={{ flex: 1 }}>
             <VStack>
                 <HStack
-                    p={6}
+                    pr={6}
+                    pl={6}
+                    pt={6}
+                    pb={3}
                     justifyContent={"space-between"}
                     alignItems="center"
                     bg="gray.600"
@@ -97,8 +99,7 @@ export function DetailsMyAds() {
                     pagingEnabled
                     keyExtractor={(item, index) => index.toString()}
                 />
-
-                <Box p={5}>
+                <ScrollView p={6} h={Platform.OS === "android" ? "50%" : "42%"}>
                     <DetailsAdsContent
                         uriUserPhoto={defaultUserPhotoImg}
                         name="Helio Haruo"
@@ -106,44 +107,44 @@ export function DetailsMyAds() {
                         product="Bicicleta"
                         price={120.00}
                         description="Lorem Ipsum is simply dummy text of the printing and
-                typesetting industry. Lorem Ipsum has been
-                typesetting industry. Lorem Ipsum has been
-                typesetting industry. Lorem Ipsum has been
-                typesetting industry. Lorem Ipsum has been"
+                                    typesetting industry. Lorem Ipsum has been
+                                    typesetting industry. Lorem Ipsum has been
+                                    typesetting industry. Lorem Ipsum has been
+                                    typesetting industry. Lorem Ipsum has been"
                         exchange={true}
                     />
 
-                    <VStack mt={2}>
+                    <VStack mt={1} mb={8}>
                         <Text fontFamily="heading">
                             Meios de pagamento:
                         </Text>
-
-                        <FlatList
-                            data={formPayment}
-                            renderItem={({ item }) => (
-                                <FormPayment
-                                    payment={item.type}
-                                />
-                            )}
-                        />
+                        <Box>
+                            {
+                                formPayment.map((typePayment) => {
+                                    return <FormPayment
+                                        payment={typePayment.type}
+                                    />
+                                })
+                            }
+                        </Box>
                     </VStack>
+                </ScrollView>
 
-                    <Box mt={4}>
-                        <LargButton
-                            bgColor="gray.100"
-                            textColor="white"
-                            title="Desativar anúncios"
-                            icon="POWER"
-                        />
+                <VStack pr={6} pl={6}>
+                    <LargButton
+                        bgColor="gray.100"
+                        textColor="white"
+                        title="Desativar anúncios"
+                        icon="POWER"
+                    />
 
-                        <LargButton
-                            bgColor="gray.500"
-                            textColor="gray.100"
-                            title="Excluir anúncio"
-                            icon="DELETE"
-                        />
-                    </Box>
-                </Box>
+                    <LargButton
+                        bgColor="gray.500"
+                        textColor="gray.100"
+                        title="Excluir anúncio"
+                        icon="DELETE"
+                    />
+                </VStack>
             </VStack>
         </SafeAreaView>
     );
