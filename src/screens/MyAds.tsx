@@ -14,6 +14,7 @@ type Props = {
     price: number;
     source: ImageSourcePropType;
     is_new: boolean;
+    is_activated: boolean;
 }
 
 export function MyAds() {
@@ -25,70 +26,80 @@ export function MyAds() {
             uri: null,
             price: 59.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: true,
         },
         {
             name: "tenis azul",
             uri: null,
             price: 120.90,
             source: testeImage as ImageSourcePropType,
-            is_new: false
+            is_new: false,
+            is_activated: true,
         },
         {
             name: "tenis amarelo",
             uri: null,
             price: 160.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: true,
         },
         {
             name: "tenis verde",
             uri: null,
             price: 350.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: false,
         },
         {
             name: "tenis roxo",
             uri: null,
             price: 1000.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: true,
         },
         {
             name: "tenis preto",
             uri: null,
             price: 2500.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: true,
         },
         {
             name: "tenis preto e ranco",
             uri: null,
             price: 1000.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: false,
         },
         {
             name: "tenis marinho",
             uri: null,
             price: 2500.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: false,
         },
         {
             name: "tenis preto e dfa",
             uri: null,
             price: 1000.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: true,
         },
         {
             name: "tenis adf",
             uri: null,
             price: 2500.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: false,
         },
     ]);
 
@@ -154,6 +165,7 @@ export function MyAds() {
                                         price={item.price}
                                         is_new={item.is_new}
                                         source={item.source}
+                                        is_activated={item.is_activated}
                                         alt="foto"
                                     />
                                 </TouchableOpacity>

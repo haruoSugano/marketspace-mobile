@@ -23,6 +23,7 @@ type props = {
     price: number;
     source: ImageSourcePropType;
     is_new: boolean;
+    is_activated: boolean;
 }
 
 export function Home() {
@@ -37,70 +38,80 @@ export function Home() {
             uri: defaultUserPhotoImg,
             price: 59.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: false,
         },
         {
             name: "tenis azul",
             uri: defaultUserPhotoImg,
             price: 120.90,
             source: testeImage as ImageSourcePropType,
-            is_new: false
+            is_new: false,
+            is_activated: false,
         },
         {
             name: "tenis amarelo",
             uri: defaultUserPhotoImg,
             price: 160.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: false,
         },
         {
             name: "tenis verde",
             uri: defaultUserPhotoImg,
             price: 350.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: false,
         },
         {
             name: "tenis roxo",
             uri: defaultUserPhotoImg,
             price: 1000.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: false,
         },
         {
             name: "tenis preto",
             uri: defaultUserPhotoImg,
             price: 2500.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: false,
         },
         {
             name: "tenis preto e ranco",
             uri: defaultUserPhotoImg,
             price: 1000.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: true,
         },
         {
             name: "tenis marinho",
             uri: defaultUserPhotoImg,
             price: 2500.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: true,
         },
         {
             name: "tenis preto e dfa",
             uri: defaultUserPhotoImg,
             price: 1000.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: false,
         },
         {
             name: "tenis adf",
             uri: defaultUserPhotoImg,
             price: 2500.90,
             source: testeImage as ImageSourcePropType,
-            is_new: true
+            is_new: true,
+            is_activated: true,
         },
     ]);
 

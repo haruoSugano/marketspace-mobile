@@ -7,9 +7,10 @@ type Props = IImageProps & {
     price: number;
     name: string;
     is_new: boolean;
+    is_activated?: boolean;
 }
 
-export function Item({ uri = null, price, name, is_new, ...rest }: Props) {
+export function Item({ uri = null, price, name, is_new, is_activated = true, ...rest }: Props) {
     return (
         <Box width="full" mt={2}>
             <Image
@@ -38,6 +39,22 @@ export function Item({ uri = null, price, name, is_new, ...rest }: Props) {
                     <Text fontFamily="heading" fontSize="sm" color="white">{is_new ? "NOVO" : "USADO"}</Text>
                 </Box>
             </HStack>
+
+            {
+                is_activated ?
+                    null
+                    :
+                    <Text
+                        position="absolute"
+                        fontFamily="heading"
+                        fontSize="xs"
+                        color="white"
+                        mt="48%"
+                        ml={1}
+                    >
+                        ANÚNCIO DESATIVADO
+                    </Text>
+            }
             <VStack>
                 <Text fontFamily="body" fontSize="md" color="gray.300">
                     {name}
