@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Box, HStack, Input as NativeBaseInput, Text, FlatList, VStack, Modal, Heading, Pressable, Switch, Checkbox } from "native-base";
 import { TouchableOpacity, ImageSourcePropType, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -11,11 +12,12 @@ import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 import { HomeHeader } from "@components/HomeHeader";
 import { HomeSell } from "@components/HomeSell";
 import { Item } from "@components/Item";
-import { useState } from "react";
 import { Condition } from "@components/Condition";
 import { SmallButton } from "@components/SmallButton";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
-import { TradeAndPayment } from "@components/TradeAndPayment";
+import { Trade } from "@components/Trade";
+import { Controller, useForm } from "react-hook-form";
+import { PaymentMethods } from "@components/Payments";
 
 type props = {
     name: string;
@@ -26,12 +28,19 @@ type props = {
     is_activated: boolean;
 }
 
+type FormDataProps = {
+    name: string;
+    accept_trade: boolean;
+    payment_methods: string[];
+}
+
 export function Home() {
     const [showModal, setShowModal] = useState(false);
     const [isNewModal, setIsNewModal] = useState(false);
     const [isUsedModal, setIsUsedModal] = useState(false);
     const [paymentSelected, setPaymentSelected] = useState<string[]>([]);
     const navigation = useNavigation<AppNavigatorRoutesApp>();
+    const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({});
     const [products, setProducts] = useState<props[]>([
         {
             name: "tenis vermelho",
@@ -137,29 +146,36 @@ export function Home() {
                 <Text mt={4}>
                     Compre produtos variados
                 </Text>
-                <NativeBaseInput
-                    bg="white"
-                    mt={2}
-                    px={4}
-                    height={46}
-                    fontSize="md"
-                    fontFamily="body"
-                    borderWidth={0}
-                    borderRadius={6}
-                    placeholderTextColor="gray.400"
-                    placeholder="Buscar anúncio"
-                    InputRightElement={
-                        <HStack alignItems="center" mr={2}>
-                            <TouchableOpacity
-                            >
-                                <MagnifyingGlass size={22} />
-                            </TouchableOpacity>
-                            <Box width={0.4} height={18} bg="gray.500" mr={2} ml={2} />
-                            <TouchableOpacity onPress={() => setShowModal(true)}>
-                                <Sliders size={22} />
-                            </TouchableOpacity>
-                        </HStack>
-                    }
+
+                <Controller
+                    control={control}
+                    name="name"
+                    render={({ field: { onChange, value } }) => (
+                        <NativeBaseInput
+                            bg="white"
+                            mt={2}
+                            px={4}
+                            height={46}
+                            fontSize="md"
+                            fontFamily="body"
+                            borderWidth={0}
+                            borderRadius={6}
+                            placeholderTextColor="gray.400"
+                            placeholder="Buscar anúncio"
+                            InputRightElement={
+                                <HStack alignItems="center" mr={2}>
+                                    <TouchableOpacity
+                                    >
+                                        <MagnifyingGlass size={22} />
+                                    </TouchableOpacity>
+                                    <Box width={0.4} height={18} bg="gray.500" mr={2} ml={2} />
+                                    <TouchableOpacity onPress={() => setShowModal(true)}>
+                                        <Sliders size={22} />
+                                    </TouchableOpacity>
+                                </HStack>
+                            }
+                        />
+                    )}
                 />
 
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="full">
@@ -228,12 +244,33 @@ export function Home() {
                                     </TouchableOpacity>
                                 </HStack>
 
-                                <TradeAndPayment
-                                    paymentSelected={paymentSelected}
-                                    onChange={handlePaymentSelected}
-                                />
+                                <Box mt={5}>
+                                    <Controller
+                                        control={control}
+                                        name="accept_trade"
+                                        render={({ field: { onChange, value } }) => (
+                                            <Trade
+                                                trackColor={{ false: 'gray.500', true: '#81b0ff' }}
+                                                thumbColor={value ? 'gray.500' : 'white'}
+                                                onValueChange={onChange}
+                                                value={value}
+                                            />
+                                        )}
+                                    />
 
-                                <HStack mt={6} justifyContent="space-between">
+                                    <Controller
+                                        control={control}
+                                        name="payment_methods"
+                                        render={({ field: { onChange, value } }) => (
+                                            <PaymentMethods
+                                                defaultValue={paymentSelected}
+                                                onChange={(values) => onChange(values)}
+                                            />
+                                        )}
+                                    />
+                                </Box>
+
+                                <HStack mt={8} justifyContent="space-between">
                                     <SmallButton
                                         title="Resetar filtros"
                                         bgColor="gray.500"

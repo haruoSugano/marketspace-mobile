@@ -6,7 +6,7 @@ type Props = IButtonProps & {
     textColor?: string;
 }
 
-export function Button({ title, bgColor, textColor }: Props) {
+export function Button({ title, bgColor, textColor, ...rest }: Props) {
     return (
         <ButtonNative
             w="full"
@@ -18,6 +18,7 @@ export function Button({ title, bgColor, textColor }: Props) {
             _pressed={{
                 bg: "gray.400"
             }}
+            {...rest}
         >
             <Text
                 color={textColor}
