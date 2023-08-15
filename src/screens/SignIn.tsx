@@ -1,6 +1,7 @@
 import { ScrollView, Text, VStack, Center } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
+import { api } from "@services/api";
 
 import LogoImg from "@assets/logo.svg";
 import { Input } from "@components/Input";
@@ -9,6 +10,8 @@ import { Button } from "@components/Button";
 
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
+import { useAuth } from "@hooks/useAuth";
+
 type FormData = {
     email: string,
     password: string,
@@ -16,6 +19,7 @@ type FormData = {
 
 export function SignIn() {
     const navigation = useNavigation<AuthNavigatorRoutesProps>();
+    const { signIn } = useAuth();
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
 
     function handleNavigateSignUp() {
@@ -23,7 +27,7 @@ export function SignIn() {
     }
 
     async function handleSign({ email, password }: FormData) {
-        console.log({ email, password });
+        signIn(email, password);
     }
 
     return (

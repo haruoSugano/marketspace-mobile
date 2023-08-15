@@ -1,9 +1,17 @@
-import { Center, ScrollView, Text, VStack } from "native-base";
+import { useState } from "react";
+import { Center, ScrollView, Text, VStack, useToast } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+
+import { api } from "@services/api";
+
 
 import LogoImg from "@assets/logo.svg";
 
@@ -11,35 +19,121 @@ import { Perfil } from "@components/Perfil";
 import { Input } from "@components/Input";
 import { InputPassword } from "@components/InputPassword";
 import { Button } from "@components/Button";
+import { ImageSourcePropType } from "react-native";
+import { AppError } from "@utils/AppError";
 
 type FormDataProps = {
     name: string;
     email: string;
-    phone: string;
+    tel: string;
     password: string;
     passwordConfirm: string;
+    avatar: ImageSourcePropType;
 }
 
 const signUpSchema = yup.object({
     name: yup.string().required("Informe o nome."),
     email: yup.string().required("Informe o e-mail.").email("E-mail inválido."),
-    phone: yup.string().required("Informe o telefone."),
+    tel: yup.string().required("Informe o telefone."),
     password: yup.string().required("Informe a senha.").min(6, "A senha deve ter pelo menos 6 digitos."),
     passwordConfirm: yup.string().required("Confirme a senha.").oneOf([yup.ref('password'), ""], "A confirmação da senha não confere")
 });
 
 export function SignUp() {
     const navigation = useNavigation();
+    const [fileExtension, setFileExtension] = useState<string | undefined>("");
+    const toast = useToast();
     const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
         resolver: yupResolver(signUpSchema)
     });
+    const [avatarProfile, setAvatarProfile] = useState<any>();
 
     function handleGoBack() {
         navigation.goBack();
     }
 
-    async function handleSignUp(data: FormDataProps) {
-        console.log(data)
+    async function handleUserPhotoSelect() {
+        try {
+            const photoSelected = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                quality: 1,
+                aspect: [4, 4],
+                allowsEditing: true
+            });
+
+            if (photoSelected.canceled) {
+                return;
+            }
+
+            const photoAssets = photoSelected.assets[0];
+
+            if (photoAssets.uri) {
+                const photoInfo = await FileSystem.getInfoAsync(photoAssets.uri);
+
+                if (photoInfo.size && (photoInfo.size / 1024 / 1024) > 1) {
+                    return toast.show({
+                        title: "Essa imagem é muito grande. Escolha uma de até 5MB",
+                        placement: "top",
+                        bgColor: "red.500"
+                    });
+                }
+
+                const photoExtension = photoAssets.uri.split('.').pop();
+
+                setFileExtension(photoExtension);
+                setAvatarProfile(photoAssets);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function handleSignUp({ name, email, tel, password, passwordConfirm, avatar }: FormDataProps) {
+        try {
+            
+            if (!avatarProfile) {
+                return toast.show({
+                    title: "A imagem de perfil é obrigatória.",
+                    placement: "top",
+                    bgColor: "red.500"
+                });
+            }
+
+            const avatarFile = {
+                name: `${name}.${fileExtension}`.toLocaleLowerCase(),
+                uri: avatarProfile.uri,
+                type: `${avatarProfile.type}/${fileExtension}`
+            } as any;
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('tel', tel);
+            formData.append('password', password);
+            formData.append('avatar', avatarFile);
+
+            await api.post("/users", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+
+            toast.show({
+                title: "Conta criada com sucesso!",
+                placement: "top",
+                bgColor: "green.500"
+            });
+
+            navigation.goBack();
+        } catch (error) {
+            console.log(error)
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível criar a conta. Tente novamente mais tarde";
+
+            toast.show({
+                title,
+                placement: "top",
+                bgColor: "red.500"
+            });
+        }
     }
 
     return (
@@ -61,7 +155,10 @@ export function SignUp() {
                             Crie sua conta e use o espaço para comprar itens variados e vender seus produtos
                         </Text>
 
-                        <Perfil />
+                        <Perfil
+                            photo={avatarProfile}
+                            onPress={handleUserPhotoSelect}
+                        />
 
                         <Controller
                             control={control}
@@ -103,14 +200,14 @@ export function SignUp() {
 
                         <Controller
                             control={control}
-                            name="phone"
+                            name="tel"
                             rules={{
                                 required: "Informe o telefone"
                             }}
                             render={({ field: { onChange, value } }) => (
                                 <Input
                                     placeholder="Telefone"
-                                    errorMessage={errors.phone?.message}
+                                    errorMessage={errors.tel?.message}
                                     onChangeText={onChange}
                                     value={value}
                                 />
