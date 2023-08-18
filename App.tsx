@@ -2,10 +2,10 @@ import { NativeBaseProvider, StatusBar } from "native-base";
 import { useFonts, Karla_400Regular, Karla_700Bold } from "@expo-google-fonts/karla";
 
 import { THEME } from "@theme/index";
-import { AuthRoutes } from "@routes/auth.routes";
 import { Routes } from "@routes/index";
 import { LogBox } from "react-native";
 import { AuthContextProvider } from "@contexts/AuthContext";
+import { Loading } from "@components/Loading";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
@@ -22,7 +22,7 @@ export default function App() {
         translucent
       />
       <AuthContextProvider>
-        {fontsLoaded ? <Routes /> : <Routes />}
+        {fontsLoaded ? <Routes /> : <Loading />}
       </AuthContextProvider>
     </NativeBaseProvider>
   );

@@ -12,6 +12,7 @@ import { CreateMyAds } from "@screens/CreateMyAds";
 import { DetailsMyAds } from "@screens/DetailsMyAds";
 import { EditAds } from "@screens/EditAds";
 import { AdsPreview } from "@screens/AdsPreview";
+import { useAuth } from "@hooks/useAuth";
 
 type AppRoutes = {
     home: undefined;
@@ -30,8 +31,7 @@ const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>();
 
 export function AppRoutes() {
     const { sizes, colors } = useTheme();
-
-    const iconSize = sizes[6];
+    const { signOut } = useAuth();
 
     return (
         <Navigator
@@ -77,7 +77,11 @@ export function AppRoutes() {
                         <SignOut color={color} />
                     )
                 }}
+                listeners={{
+                    tabPress: signOut
+                }}
             />
+
 
             <Screen
                 name="detailsAds"

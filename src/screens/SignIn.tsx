@@ -1,7 +1,6 @@
-import { ScrollView, Text, VStack, Center } from "native-base";
+import { ScrollView, Text, VStack, Center, useToast } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
-import { api } from "@services/api";
 
 import LogoImg from "@assets/logo.svg";
 import { Input } from "@components/Input";
@@ -11,6 +10,8 @@ import { Button } from "@components/Button";
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
 import { useAuth } from "@hooks/useAuth";
+import { AppError } from "@utils/AppError";
+import { useState } from "react";
 
 type FormData = {
     email: string,
@@ -18,7 +19,9 @@ type FormData = {
 }
 
 export function SignIn() {
+    const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation<AuthNavigatorRoutesProps>();
+    const toast = useToast();
     const { signIn } = useAuth();
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
 
@@ -27,7 +30,22 @@ export function SignIn() {
     }
 
     async function handleSign({ email, password }: FormData) {
-        signIn(email, password);
+        try {
+            setIsLoading(true);
+
+            signIn(email, password);
+        } catch (error) {
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível realizar o login. Tente novamente mais tarde."
+
+            setIsLoading(false);
+
+            toast.show({
+                title,
+                placement: "top",
+                bgColor: "red.500"
+            })
+        }
     }
 
     return (
@@ -80,6 +98,7 @@ export function SignIn() {
                         bgColor="#647AC7"
                         textColor="#F7F7F8"
                         onPress={handleSubmit(handleSign)}
+                        isLoading={isLoading}
                     />
                 </Center>
             </VStack>

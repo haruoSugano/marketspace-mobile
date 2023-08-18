@@ -164,8 +164,7 @@ export function Home() {
                             placeholder="Buscar anúncio"
                             InputRightElement={
                                 <HStack alignItems="center" mr={2}>
-                                    <TouchableOpacity
-                                    >
+                                    <TouchableOpacity>
                                         <MagnifyingGlass size={22} />
                                     </TouchableOpacity>
                                     <Box width={0.4} height={18} bg="gray.500" mr={2} ml={2} />
