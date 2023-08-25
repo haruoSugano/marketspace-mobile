@@ -20,8 +20,10 @@ type FormData = {
 
 export function SignIn() {
     const [isLoading, setIsLoading] = useState(false);
+
     const navigation = useNavigation<AuthNavigatorRoutesProps>();
     const toast = useToast();
+
     const { signIn } = useAuth();
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
 
@@ -29,22 +31,22 @@ export function SignIn() {
         navigation.navigate("signUp");
     }
 
-    async function handleSign({ email, password }: FormData) {
+    async function handleSignIn({ email, password }: FormData) {
         try {
             setIsLoading(true);
 
-            signIn(email, password);
+            await signIn(email, password);
         } catch (error) {
             const isAppError = error instanceof AppError;
             const title = isAppError ? error.message : "Não foi possível realizar o login. Tente novamente mais tarde."
-
-            setIsLoading(false);
 
             toast.show({
                 title,
                 placement: "top",
                 bgColor: "red.500"
             })
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -97,7 +99,7 @@ export function SignIn() {
                         title="Entrar"
                         bgColor="#647AC7"
                         textColor="#F7F7F8"
-                        onPress={handleSubmit(handleSign)}
+                        onPress={handleSubmit(handleSignIn)}
                         isLoading={isLoading}
                     />
                 </Center>

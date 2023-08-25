@@ -41,6 +41,7 @@ const signUpSchema = yup.object({
 export function SignUp() {
     const navigation = useNavigation();
     const [fileExtension, setFileExtension] = useState<string | undefined>("");
+    const [isLoading, setIsLoading] = useState(false);
     const toast = useToast();
     const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
         resolver: yupResolver(signUpSchema)
@@ -89,6 +90,7 @@ export function SignUp() {
 
     async function handleSignUp({ name, email, tel, password, passwordConfirm, avatar }: FormDataProps) {
         try {
+            setIsLoading(true);
             
             if (!avatarProfile) {
                 return toast.show({
@@ -132,6 +134,8 @@ export function SignUp() {
                 placement: "top",
                 bgColor: "red.500"
             });
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -252,6 +256,7 @@ export function SignUp() {
                             bgColor="gray.100"
                             textColor="white"
                             onPress={handleSubmit(handleSignUp)}
+                            isLoading={isLoading}
                         />
 
                         <Text fontFamily="body" fontSize="sm" mt={8} mb={-5}>

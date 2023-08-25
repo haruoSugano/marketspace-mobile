@@ -18,6 +18,7 @@ import { AppNavigatorRoutesApp } from "@routes/app.routes";
 import { Trade } from "@components/Trade";
 import { Controller, useForm } from "react-hook-form";
 import { PaymentMethods } from "@components/Payments";
+import { useAuth } from "@hooks/useAuth";
 
 type props = {
     name: string;
@@ -35,6 +36,7 @@ type FormDataProps = {
 }
 
 export function Home() {
+    const { user } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [isNewModal, setIsNewModal] = useState(false);
     const [isUsedModal, setIsUsedModal] = useState(false);
@@ -135,7 +137,10 @@ export function Home() {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <VStack pt={6} pb={4} px={6}>
-                <HomeHeader />
+                <HomeHeader 
+                    name={user.name}
+                    avatarUrl={user.avatar}
+                />
 
                 <Text fontFamily="body" fontSize="sm" color="gray.200">
                     Seus produtos anunciados para venda

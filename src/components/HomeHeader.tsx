@@ -4,20 +4,26 @@ import { UserPhoto } from "./UserPhoto";
 
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
+import { api } from "@services/api";
 
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
-export function HomeHeader() {
+type Props = {
+    avatarUrl?: string;
+    name: string;
+}
+
+export function HomeHeader({ name, avatarUrl }: Props) {
     const navigation = useNavigation<AppNavigatorRoutesApp>();
 
     function handleNavigateCreateMyAds() {
         navigation.navigate("createMyAds");
     }
-    
+
     return (
         <HStack alignItems="center" mb={4}>
             <UserPhoto
-                source={defaultUserPhotoImg}
+                source={avatarUrl ? {uri: `${api.defaults.baseURL}/images/${avatarUrl}`} : defaultUserPhotoImg}
                 alt="User photo"
                 size={12}
                 mr={4}
@@ -29,7 +35,7 @@ export function HomeHeader() {
                 </Text>
 
                 <Heading color="gray.100" fontSize="lg" fontFamily="heading">
-                    Helio!
+                    {name}!
                 </Heading>
             </VStack>
 

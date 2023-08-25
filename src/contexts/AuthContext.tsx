@@ -5,6 +5,7 @@ import { UserDTO } from "@dtos/UserDTO";
 import { api } from "@services/api";
 import { AppError } from "@utils/AppError";
 import { storageUserGet, storageUserRemove, storageUserSave } from "@storage/storageUser";
+import { storageAuthTokenGet, storageAuthTokenRemove, storageAuthTokenSave } from "@storage/storageAuthToken";
 
 export type AuthContextDataProps = {
     user: UserDTO;
@@ -24,6 +25,24 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(true);
     const [user, setUser] = useState<UserDTO>({} as UserDTO);
 
+    async function userAndTokenUpdate(userData: UserDTO, token: string) {
+        api.defaults.headers.common["Authorization"] = "Bearer " + token;
+        setUser(userData);
+    }
+
+    async function userAndTokenSave(userData: UserDTO, token: string, refresh_token: string) {
+        try {
+            setIsLoadingUserStorageData(true);
+
+            await storageUserSave(userData);
+            await storageAuthTokenSave({ token, refresh_token })
+        } catch (error) {
+            throw error;
+        } finally {
+            setIsLoadingUserStorageData(false);
+        }
+    }
+
     async function signIn(email: string, password: string) {
         try {
             const { data } = await api.post("/sessions", {
@@ -31,14 +50,15 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
                 password
             });
 
-            if (data.user) {
-                setUser(data.user);
-                storageUserSave(data.user);
+            if (data.user && data.token && data.refresh_token) {
+                await userAndTokenSave(data.user, data.token, data.refresh_token);
+
+                userAndTokenUpdate(data.user, data.token);
             }
         } catch (error) {
             const isAppError = error instanceof AppError;
 
-            const title = isAppError ? error.message : "Não foi possível realizar o login. Tente novamente mais tarde."
+            const title = isAppError ? error.message : "Não foi possível realizar o login. Tente novamente mais tarde.";
 
             toast.show({
                 title,
@@ -48,13 +68,14 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         }
     }
 
-    async function loadUserData() {
+    async function signOut() {
         try {
-            const userLogged = await storageUserGet();
+            setIsLoadingUserStorageData(true);
+            
+            setUser({} as UserDTO);
 
-            if (userLogged) {
-                setUser(userLogged);
-            }
+            await storageAuthTokenRemove();
+            await storageUserRemove();
         } catch (error) {
             throw error;
         } finally {
@@ -62,13 +83,16 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         }
     }
 
-    async function signOut() {
+    async function loadUserData() {
         try {
             setIsLoadingUserStorageData(true);
-            
-            setUser({} as UserDTO);
 
-            await storageUserRemove();
+            const userLogged = await storageUserGet();
+            const { token } = await storageAuthTokenGet();
+
+            if (token && userLogged) {
+                userAndTokenUpdate(userLogged, token);
+            }
         } catch (error) {
             throw error;
         } finally {
@@ -78,6 +102,14 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
     useEffect(() => {
         loadUserData();
+    }, []);
+
+    useEffect(() => {
+        const subscribe = api.registerInterceptTokenManager(signOut);
+
+        return () => {
+            subscribe();
+        }
     }, []);
 
     return (
