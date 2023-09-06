@@ -26,16 +26,18 @@ api.registerInterceptTokenManager = signOut => {
     const interceptTokenManager = api.interceptors.response.use(response => response, async requestError => {
         if (requestError.response?.status === 401) {
             if (requestError.response.data?.message === "token.expired" || requestError.response.data?.message === "token.invalid") {
-                const { refresh_token } = await storageAuthTokenGet();
-                console.log(refresh_token)
+                const { token, refresh_token } = await storageAuthTokenGet();
+
                 if (!refresh_token) {
+                    console.log("entrou aqui")
                     signOut();
                     return Promise.reject(requestError);
                 }
 
                 const originalRequestConfig = requestError.config;
-
+        
                 if (isRefreshing) {
+                    console.log("entrou aqui - isRefeshing true")
                     return new Promise((resolve, reject) => {
                         failedQueue.push({
                             onSuccess: (token: string) => {
@@ -54,6 +56,7 @@ api.registerInterceptTokenManager = signOut => {
                 return new Promise(async (resolve, reject) => {
                     try {
                         const { data } = await api.post("/sessions/refresh-token", { refresh_token });
+                        
                         await storageAuthTokenSave({
                             token: data.token,
                             refresh_token: data.refresh_token

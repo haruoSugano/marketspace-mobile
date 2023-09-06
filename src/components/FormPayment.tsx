@@ -8,14 +8,14 @@ type Props = {
 export function FormPayment({ payment }: Props) {
     const renderSwitchFormPayment = (formPayment: string) => {
         switch (formPayment) {
-            case "Boleto":
+            case "boleto":
                 return (
                     <HStack>
                         <Barcode />
                         <Text ml={2}>Boleto</Text>
                     </HStack>
                 );
-            case "Pix":
+            case "pix":
                 return (
                     <HStack>
                         <QrCode />
@@ -24,7 +24,7 @@ export function FormPayment({ payment }: Props) {
                         </Text>
                     </HStack>
                 );
-            case "Dinheiro":
+            case "cash":
                 return (
                     <HStack>
                         <Money />
@@ -33,7 +33,7 @@ export function FormPayment({ payment }: Props) {
                         </Text>
                     </HStack>
                 );
-            case "Cartão de Crédito":
+            case "card":
                 return (
                     <HStack>
                         <CreditCard />
@@ -42,7 +42,7 @@ export function FormPayment({ payment }: Props) {
                         </Text>
                     </HStack>
                 );
-            case "Depósito Bancário":
+            case "deposit":
                 return (
                     <HStack>
                         <Bank />

@@ -14,19 +14,19 @@ export function PaymentMethods({...rest}:Props) {
                 <Checkbox.Group
                     {...rest}
                 >
-                    <Checkbox value="Boleto" my={1}>
+                    <Checkbox value="boleto" my={1}>
                         Boleto
                     </Checkbox>
-                    <Checkbox value="Pix" my={1}>
+                    <Checkbox value="pix" my={1}>
                         Pix
                     </Checkbox>
-                    <Checkbox value="Dinheiro" my={1}>
+                    <Checkbox value="cash" my={1}>
                         Dinheiro
                     </Checkbox>
-                    <Checkbox value="Cartão de Crédito" my={1}>
+                    <Checkbox value="card" my={1}>
                         Cartão de Crédito
                     </Checkbox>
-                    <Checkbox value="Depósito Bancário" my={1}>
+                    <Checkbox value="deposit" my={1}>
                         Depósito Bancário
                     </Checkbox>
                 </Checkbox.Group>

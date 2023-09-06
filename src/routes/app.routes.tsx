@@ -13,6 +13,7 @@ import { DetailsMyAds } from "@screens/DetailsMyAds";
 import { EditAds } from "@screens/EditAds";
 import { AdsPreview } from "@screens/AdsPreview";
 import { useAuth } from "@hooks/useAuth";
+import { ProductDTO } from "@dtos/ProductDTO";
 
 type AppRoutes = {
     home: undefined;
@@ -22,7 +23,7 @@ type AppRoutes = {
     createMyAds: undefined;
     detailsMyAds: undefined;
     editAds: undefined;
-    adsPreview: undefined;
+    adsPreview: {product: ProductDTO};
 }
 
 export type AppNavigatorRoutesApp = BottomTabNavigationProp<AppRoutes>;

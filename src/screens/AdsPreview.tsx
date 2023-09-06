@@ -1,74 +1,117 @@
-import { useState } from "react";
-import { Dimensions, ImageSourcePropType, Platform } from "react-native";
-import { Center, Text, VStack, Image, FlatList, Box, HStack, ScrollView } from "native-base";
+import { useEffect, useState } from "react";
+import { Dimensions, Platform } from "react-native";
+import { Text, VStack, Image, FlatList, Box, HStack, ScrollView, useToast } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
 
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
-import testeImage from "@assets/Image.png";
 
 import { FormPayment } from "@components/FormPayment";
 import { DetailsAdsContent } from "@components/DetailsAdsContent";
 import { IconButton } from "@components/IconButton";
-
+import { api } from "@services/api";
+import { ProductDTO } from "@dtos/ProductDTO";
+import { AppError } from "@utils/AppError";
+import { useAuth } from "@hooks/useAuth";
+import { storageAuthTokenGet } from "@storage/storageAuthToken";
 
 const { width } = Dimensions.get('window');
 
-type Props = {
-    id: string;
-    url: ImageSourcePropType;
-}
-
-type FormPaymentProps = {
-    id: string;
-    type: string;
+type RouteParamsProps = {
+    product: ProductDTO;
 }
 
 export function AdsPreview() {
     const navigation = useNavigation<AppNavigatorRoutesApp>();
-    const [productImages, setProductImages] = useState<Props[]>([
-        {
-            id: "1",
-            url: testeImage as ImageSourcePropType
-        },
-        {
-            id: "2",
-            url: testeImage as ImageSourcePropType
-        },
-        {
-            id: "3",
-            url: testeImage as ImageSourcePropType
-        }
-    ]);
+    const { user } = useAuth();
+    const [isLoading, setIsLoading] = useState(true);
+    const toast = useToast();
+    const route = useRoute();
 
-    const [formPayment, setFormPayment] = useState<FormPaymentProps[]>([
-        {
-            id: "1",
-            type: "Boleto"
-        },
-        {
-            id: "2",
-            type: "Pix"
-        },
-        {
-            id: "3",
-            type: "Dinheiro"
-        },
-        {
-            id: "4",
-            type: "Cartão de Crédito"
-        },
-        {
-            id: "5",
-            type: "Depósito Bancário"
-        },
-    ]);
+    const { product } = route.params as RouteParamsProps;
+
+    const [productData, setProductData] = useState<ProductDTO>({} as ProductDTO);
+    const [productImages, setProductImages] = useState<any[]>([]);
 
     function handleNavigateEdit() {
-        navigation.navigate("editAds");
+        navigation.navigate("createMyAds");
     }
+
+    async function handlePublish() {
+        try {
+            setIsLoading(true);
+
+            const { token } = await storageAuthTokenGet();
+            const formDataProductImage = new FormData();
+
+            const responseProductData = await api.post("/products",
+                {
+                    name: productData.name,
+                    description: productData.description,
+                    is_new: productData.is_new,
+                    price: productData.price,
+                    accept_trade: productData.accept_trade,
+                    payment_methods: productData.payment_methods
+                },
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+
+            productImages.forEach((product) => {
+                formDataProductImage.append("images", product as Blob, product.name);
+            });
+
+            formDataProductImage.append('product_id', responseProductData.data.id);
+
+            await api.post("/products/images", formDataProductImage, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+
+            toast.show({
+                title: "Seu anúncio foi criado com sucesso.",
+                placement: "top",
+                bgColor: "green.500"
+            });
+
+            navigation.navigate("myAds");
+        } catch (error) {
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível publicar o produto.";
+
+            toast.show({
+                title,
+                placement: "top",
+                bgColor: "red.500"
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    async function fetchAdsDetails() {
+        try {
+            setIsLoading(true);
+        
+            setProductData(product);
+            setProductImages(product.product_images);
+        } catch (error) {
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível carregar os detalhes do produto.";
+
+            toast.show({
+                title,
+                placement: "top",
+                bgColor: "red.500"
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchAdsDetails();
+    }, [product]);
 
     return (
         <SafeAreaView style={{ flex: 1, height: "15%", backgroundColor: "#647AC7" }}>
@@ -86,7 +129,8 @@ export function AdsPreview() {
                     data={productImages}
                     renderItem={({ item }) => (
                         <Image
-                            source={item.url}
+                            key={item.id}
+                            source={{ uri: item.uri }}
                             alt="foto"
                             width={width}
                             h={250}
@@ -104,17 +148,13 @@ export function AdsPreview() {
                     bg="white"
                 >
                     <DetailsAdsContent
-                        uriUserPhoto={defaultUserPhotoImg}
-                        name="Helio Haruo"
-                        is_new={true}
-                        product="Bicicleta"
-                        price={120.00}
-                        description="Lorem Ipsum is simply dummy text of the printing and
-                                    typesetting industry. Lorem Ipsum has been
-                                    typesetting industry. Lorem Ipsum has been
-                                    typesetting industry. Lorem Ipsum has been
-                                    typesetting industry. Lorem Ipsum has been"
-                        exchange={true}
+                        uriUserPhoto={user.avatar ? { uri: `${api.defaults.baseURL}/images/${user.avatar}` } : defaultUserPhotoImg}
+                        name={user.name}
+                        is_new={product.is_new}
+                        product={product.name}
+                        price={product.price}
+                        description={product.description}
+                        exchange={product.accept_trade}
                     />
 
                     <VStack mt={1} mb={8}>
@@ -123,9 +163,10 @@ export function AdsPreview() {
                         </Text>
                         <Box>
                             {
-                                formPayment.map((typePayment) => {
+                                product.payment_methods.map((typePayment) => {
                                     return <FormPayment
-                                        payment={typePayment.type}
+                                        key={typePayment}
+                                        payment={typePayment}
                                     />
                                 })
                             }
@@ -154,6 +195,8 @@ export function AdsPreview() {
                         bgColor="blue.light"
                         textColor="white"
                         typeIcon="TAG"
+                        onPress={handlePublish}
+                        isLoading={isLoading}
                     />
                 </HStack>
             </VStack>
