@@ -1,12 +1,11 @@
-import { useState } from "react";
-import { Box, HStack, Input as NativeBaseInput, Text, FlatList, VStack, Modal, Heading, Pressable, Switch, Checkbox } from "native-base";
-import { TouchableOpacity, ImageSourcePropType, Platform } from "react-native";
+import { useEffect, useState } from "react";
+import { Box, HStack, Input as NativeBaseInput, Text, FlatList, VStack, Modal, Heading, useToast } from "native-base";
+import { TouchableOpacity, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MagnifyingGlass, Sliders } from "phosphor-react-native";
 
-import testeImage from "@assets/Image.png";
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
 import { HomeHeader } from "@components/HomeHeader";
@@ -19,15 +18,10 @@ import { Trade } from "@components/Trade";
 import { Controller, useForm } from "react-hook-form";
 import { PaymentMethods } from "@components/Payments";
 import { useAuth } from "@hooks/useAuth";
-
-type props = {
-    name: string;
-    uri: ImageSourcePropType;
-    price: number;
-    source: ImageSourcePropType;
-    is_new: boolean;
-    is_activated: boolean;
-}
+import { ProductDTO } from "@dtos/ProductDTO";
+import { api } from "@services/api";
+import { AppError } from "@utils/AppError";
+import { storageAuthTokenGet } from "@storage/storageAuthToken";
 
 type FormDataProps = {
     name: string;
@@ -35,109 +29,103 @@ type FormDataProps = {
     payment_methods: string[];
 }
 
+type ProductProps = {
+    id: string;
+    name: string;
+    price: number;
+    is_new: boolean;
+    path: string;
+    token: string;
+}
+
 export function Home() {
     const { user } = useAuth();
+    const toast = useToast();
+    const navigation = useNavigation<AppNavigatorRoutesApp>();
+    const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({});
+
     const [showModal, setShowModal] = useState(false);
     const [isNewModal, setIsNewModal] = useState(false);
     const [isUsedModal, setIsUsedModal] = useState(false);
+    const [isNew, setIsNew] = useState<boolean>();
     const [paymentSelected, setPaymentSelected] = useState<string[]>([]);
-    const navigation = useNavigation<AppNavigatorRoutesApp>();
-    const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({});
-    const [products, setProducts] = useState<props[]>([
-        {
-            name: "tenis vermelho",
-            uri: defaultUserPhotoImg,
-            price: 59.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: false,
-        },
-        {
-            name: "tenis azul",
-            uri: defaultUserPhotoImg,
-            price: 120.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: false,
-            is_activated: false,
-        },
-        {
-            name: "tenis amarelo",
-            uri: defaultUserPhotoImg,
-            price: 160.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: false,
-        },
-        {
-            name: "tenis verde",
-            uri: defaultUserPhotoImg,
-            price: 350.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: false,
-        },
-        {
-            name: "tenis roxo",
-            uri: defaultUserPhotoImg,
-            price: 1000.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: false,
-        },
-        {
-            name: "tenis preto",
-            uri: defaultUserPhotoImg,
-            price: 2500.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: false,
-        },
-        {
-            name: "tenis preto e ranco",
-            uri: defaultUserPhotoImg,
-            price: 1000.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: true,
-        },
-        {
-            name: "tenis marinho",
-            uri: defaultUserPhotoImg,
-            price: 2500.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: true,
-        },
-        {
-            name: "tenis preto e dfa",
-            uri: defaultUserPhotoImg,
-            price: 1000.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: false,
-        },
-        {
-            name: "tenis adf",
-            uri: defaultUserPhotoImg,
-            price: 2500.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: true,
-        },
-    ]);
+    const [products, setProducts] = useState<ProductProps[]>([]);
 
     function handleNavigateDetailMyAds() {
         navigation.navigate("detailsAds");
+    }
+
+    function handleIsNewIsUsedCondition(is_new: boolean, condition: string) {
+        switch (condition) {
+            case "new":
+                setIsNewModal(true);
+                setIsUsedModal(false);
+                setIsNew(true);
+                break;
+            case "used":
+                setIsNewModal(false);
+                setIsUsedModal(true);
+                setIsNew(false);
+                break;
+            default:
+                setIsNew(undefined);
+                break;
+        }
+    }
+
+    async function handleApplyFilters({ name, accept_trade, payment_methods }: FormDataProps) {
+        // console.log({
+        //     name,
+        //     accept_trade,
+        //     payment_methods,
+        //     isNew
+        // });
     }
 
     function handlePaymentSelected(selectedPayment: string[]) {
         setPaymentSelected(selectedPayment);
     };
 
+    async function fetchProducts() {
+        try {
+            const { token } = await storageAuthTokenGet();
+
+            const response = await api.get(`/users/products`,
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+
+            const formatProductsData = response.data.map((product: ProductDTO) => {
+                return {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    is_new: product.is_new,
+                    path: product.product_images[0].path,
+                    token
+                }
+            });
+
+            setProducts(formatProductsData);
+        } catch (error) {
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível carregar os produtos";
+
+            toast.show({
+                title,
+                placement: "top",
+                bgColor: "red.500"
+            });
+        }
+    }
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <VStack pt={6} pb={4} px={6}>
-                <HomeHeader 
+                <HomeHeader
                     name={user.name}
                     avatarUrl={user.avatar}
                 />
@@ -178,6 +166,7 @@ export function Home() {
                                     </TouchableOpacity>
                                 </HStack>
                             }
+                            value={value}
                         />
                     )}
                 />
@@ -193,8 +182,12 @@ export function Home() {
                                 <Text fontFamily="heading">
                                     Condição
                                 </Text>
+
                                 <HStack mt={2}>
-                                    <TouchableOpacity onPress={() => setIsNewModal(true)} style={{ marginRight: 5 }}>
+                                    <TouchableOpacity
+                                        onPress={() => handleIsNewIsUsedCondition(true, "new")}
+                                        style={{ marginRight: 5 }}
+                                    >
                                         <Box
                                             width={isNewModal ? 24 : 16}
                                             height={8}
@@ -213,14 +206,17 @@ export function Home() {
                                                     <Text
                                                         fontFamily="heading"
                                                         fontSize="sm"
-                                                        color={isNewModal ? "white" : "gray.300"}>
+                                                        color={isNewModal ? "white" : "gray.300"}
+                                                    >
                                                         NOVO
                                                     </Text>
                                             }
                                         </Box>
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => setIsUsedModal(true)}>
+                                    <TouchableOpacity
+                                        onPress={() => handleIsNewIsUsedCondition(false, "used")}
+                                    >
                                         <Box
                                             width={isUsedModal ? 24 : 16}
                                             height={8}
@@ -285,6 +281,7 @@ export function Home() {
                                         title="Aplicar filtros"
                                         bgColor="gray.100"
                                         textColor="white"
+                                        onPress={handleSubmit(handleApplyFilters)}
                                     />
                                 </HStack>
                             </VStack>
@@ -296,17 +293,17 @@ export function Home() {
                     <FlatList
                         columnWrapperStyle={{ justifyContent: "space-between" }}
                         data={products}
-                        keyExtractor={item => item.name}
+                        keyExtractor={item => item.id as string}
                         renderItem={({ item }) => (
                             <Box>
                                 <TouchableOpacity onPress={handleNavigateDetailMyAds}>
                                     <Item
-                                        uri={defaultUserPhotoImg}
+                                        uri={user.avatar ? { uri: `${api.defaults.baseURL}/images/${user.avatar}` } : defaultUserPhotoImg}
                                         name={item.name}
                                         price={item.price}
                                         is_new={item.is_new}
-                                        source={item.source}
-                                        alt="foto"
+                                        alt={item.name}
+                                        source={item.path ? { uri: `${api.defaults.baseURL}/images/${item.path}` } : defaultUserPhotoImg}
                                     />
                                 </TouchableOpacity>
                             </Box>

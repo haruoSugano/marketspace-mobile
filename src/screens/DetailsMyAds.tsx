@@ -1,67 +1,92 @@
-import { useState } from "react";
-import { FlatList, VStack, Image, Box, Text, HStack, ScrollView } from "native-base";
-import { Dimensions, ImageSourcePropType, Platform, TouchableOpacity } from "react-native";
-
-import testeImage from "@assets/Image.png";
-import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { FlatList, VStack, Image, Text, HStack, ScrollView, useToast } from "native-base";
+import { Dimensions, Platform, TouchableOpacity } from "react-native";
+import { ArrowLeft, PencilSimpleLine } from "phosphor-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DetailsAdsContent } from "@components/DetailsAdsContent";
 import { FormPayment } from "@components/FormPayment";
 import { LargButton } from "@components/LargeButton";
-import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
-import { ArrowLeft, PencilSimpleLine } from "phosphor-react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { api } from "@services/api";
+import { storageAuthTokenGet } from "@storage/storageAuthToken";
+import { ProductDTO } from "@dtos/ProductDTO";
+import { useAuth } from "@hooks/useAuth";
+
+import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
 const { width } = Dimensions.get('window');
 
-type Props = {
-    id: string;
-    url: ImageSourcePropType;
-}
-
-type FormPaymentProps = {
-    id: string;
-    type: string;
+type RouteParamsProps = {
+    product: ProductDTO;
 }
 
 export function DetailsMyAds() {
     const navigation = useNavigation<AppNavigatorRoutesApp>();
-    const [productImages, setProductImages] = useState<Props[]>([
-        {
-            id: "1",
-            url: testeImage as ImageSourcePropType
-        },
-        {
-            id: "2",
-            url: testeImage as ImageSourcePropType
-        },
-        {
-            id: "3",
-            url: testeImage as ImageSourcePropType
-        }
-    ]);
-    const [formPayment, setFormPayment] = useState<FormPaymentProps[]>([
-        {
-            id: "1",
-            type: "Boleto"
-        },
-        {
-            id: "2",
-            type: "Pix"
-        },
-        {
-            id: "5",
-            type: "Depósito Bancário"
-        },
-    ]);
+    const { user } = useAuth();
+    const route = useRoute();
+    const toast = useToast();
+
+    const { product } = route.params as RouteParamsProps;
 
     function handleNavigateMyAds() {
-        navigation.navigate("myAds");
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "myAds" }]
+        });
     }
 
     function handleNavigateEdit() {
-        navigation.navigate("editAds");
+        navigation.navigate("editAds", { product });
+    }
+
+    async function handleInactivateOrActivateAds(is_active: boolean) {
+        try {
+            const { token } = await storageAuthTokenGet();
+
+            if (is_active) {
+                await api.patch(`/products/${product.id}`, { is_active: false }, { headers: { "Authorization": `Bearer ${token}` } });
+
+                navigation.setParams({
+                    product: {
+                        id: product.id,
+                        name: product.name,
+                        description: product.description,
+                        is_active: false,
+                        price: product.price,
+                        is_new: product.is_new,
+                        accept_trade: product.accept_trade,
+                        payment_methods: product.payment_methods,
+                        product_images: product.product_images
+                    }
+                });
+            } else {
+                await api.patch(`/products/${product.id}`, { is_active: true }, { headers: { "Authorization": `Bearer ${token}` } });
+
+                navigation.setParams({
+                    product: {
+                        name: product.name,
+                        description: product.description,
+                        is_active: true,
+                        price: product.price,
+                        is_new: product.is_new,
+                        accept_trade: product.accept_trade,
+                        payment_methods: product.payment_methods,
+                        product_images: product.product_images
+                    }
+                });
+            }
+
+            toast.show({
+                title: !is_active ? "Seu anúncio foi ativado" : "Seu anúncio foi desativado",
+                placement: "top",
+                bgColor: "green.500"
+            });
+
+            handleNavigateMyAds();
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -86,56 +111,54 @@ export function DetailsMyAds() {
                 </HStack>
 
                 <FlatList
-                    data={productImages}
+                    data={product?.product_images}
                     renderItem={({ item }) => (
                         <Image
-                            source={item.url}
+                            source={{ uri: `${api.defaults.baseURL}/images/${item.path}` }}
                             alt="foto"
                             width={width}
                             h={210}
+                            key={item.id}
                         />
                     )}
                     horizontal
                     pagingEnabled
-                    keyExtractor={(item, index) => index.toString()}
+                    keyExtractor={(item) => item.id}
                 />
                 <ScrollView p={6} h={Platform.OS === "android" ? "50%" : "42%"}>
                     <DetailsAdsContent
-                        uriUserPhoto={defaultUserPhotoImg}
-                        name="Helio Haruo"
-                        is_new={true}
-                        product="Bicicleta"
-                        price={120.00}
-                        description="Lorem Ipsum is simply dummy text of the printing and
-                                    typesetting industry. Lorem Ipsum has been
-                                    typesetting industry. Lorem Ipsum has been
-                                    typesetting industry. Lorem Ipsum has been
-                                    typesetting industry. Lorem Ipsum has been"
-                        exchange={true}
+                        uriUserPhoto={user.avatar ? { uri: `${api.defaults.baseURL}/images/${user.avatar}` } : defaultUserPhotoImg}
+                        name={user.name}
+                        is_new={product?.is_new as boolean}
+                        product={product?.name as string}
+                        price={product?.price as number}
+                        description={product?.description as string}
+                        exchange={product?.accept_trade as boolean}
                     />
 
                     <VStack mt={1} mb={8}>
                         <Text fontFamily="heading">
                             Meios de pagamento:
                         </Text>
-                        <Box>
-                            {
-                                formPayment.map((typePayment) => {
-                                    return <FormPayment
-                                        payment={typePayment.type}
-                                    />
-                                })
-                            }
-                        </Box>
+
+                        {
+                            product?.payment_methods.map((typePayment, key) => {
+                                return <FormPayment
+                                    key={key}
+                                    payment={typePayment.key}
+                                />
+                            })
+                        }
                     </VStack>
                 </ScrollView>
 
                 <VStack pr={6} pl={6}>
                     <LargButton
-                        bgColor="gray.100"
+                        bgColor={product?.is_active ? "gray.100" : "blue.light"}
                         textColor="white"
-                        title="Desativar anúncios"
+                        title={product?.is_active ? "Desativar anúncios" : "Reativar anúncio"}
                         icon="POWER"
+                        onPress={() => handleInactivateOrActivateAds(product?.is_active as boolean)}
                     />
 
                     <LargButton

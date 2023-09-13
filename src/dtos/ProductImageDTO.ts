@@ -2,7 +2,7 @@ import { ProductDTO } from "./ProductDTO";
 
 export type ProductImageDTO = {
     id: string;
-    uri: string;
+    path: string;
     product_id: string;
     product: ProductDTO;
 }

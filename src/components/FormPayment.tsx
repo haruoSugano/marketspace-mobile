@@ -12,7 +12,7 @@ export function FormPayment({ payment }: Props) {
                 return (
                     <HStack>
                         <Barcode />
-                        <Text ml={2}>Boleto</Text>
+                        <Text fontFamily="body" ml={2}>Boleto</Text>
                     </HStack>
                 );
             case "pix":
@@ -28,7 +28,7 @@ export function FormPayment({ payment }: Props) {
                 return (
                     <HStack>
                         <Money />
-                        <Text ml={2}>
+                        <Text fontFamily="body" ml={2}>
                             Dinheiro
                         </Text>
                     </HStack>
@@ -37,7 +37,7 @@ export function FormPayment({ payment }: Props) {
                 return (
                     <HStack>
                         <CreditCard />
-                        <Text ml={2}>
+                        <Text fontFamily="body" ml={2}>
                             Cartão de Crédito
                         </Text>
                     </HStack>
@@ -46,7 +46,7 @@ export function FormPayment({ payment }: Props) {
                 return (
                     <HStack>
                         <Bank />
-                        <Text ml={2}>
+                        <Text fontFamily="body" ml={2}>
                             Depósito Bancário
                         </Text>
                     </HStack>

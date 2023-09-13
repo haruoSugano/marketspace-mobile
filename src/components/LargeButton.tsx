@@ -8,7 +8,7 @@ type Props = IButtonProps & {
     icon: "POWER" | "DELETE";
 }
 
-export function LargButton({ bgColor, textColor, title, icon }: Props) {
+export function LargButton({ bgColor, textColor, title, icon, ...rest }: Props) {
     return (
         <ButtonNative
             w="full"
@@ -21,6 +21,7 @@ export function LargButton({ bgColor, textColor, title, icon }: Props) {
                 bg: "gray.400"
             }}
             p={2}
+            {...rest}
         >
             <HStack alignItems="center">
                 <Box mr={2}>

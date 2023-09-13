@@ -1,4 +1,4 @@
-import { HStack, VStack, Text, Box, FlatList } from "native-base";
+import { HStack, VStack, Text, Box } from "native-base";
 import { UserPhoto } from "./UserPhoto";
 import { ImageSourcePropType } from "react-native";
 
@@ -47,7 +47,7 @@ export function DetailsAdsContent({ uriUserPhoto, name, is_new, product, price, 
 
                 <Text fontFamily="heading" fontSize="lg" color="blue.light">
                     <Text fontFamily="heading" fontSize="sm">R$</Text>
-                    {(price).toString()}
+                    {price ? (price).toString() : "Valor não definido"}
                 </Text>
             </HStack>
 

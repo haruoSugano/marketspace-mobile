@@ -26,9 +26,9 @@ type RouteParamsProps = {
 export function AdsPreview() {
     const navigation = useNavigation<AppNavigatorRoutesApp>();
     const { user } = useAuth();
-    const [isLoading, setIsLoading] = useState(true);
     const toast = useToast();
     const route = useRoute();
+    const [isLoading, setIsLoading] = useState(true);
 
     const { product } = route.params as RouteParamsProps;
 

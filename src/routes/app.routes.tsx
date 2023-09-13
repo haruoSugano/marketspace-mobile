@@ -21,9 +21,9 @@ type AppRoutes = {
     signIn: undefined;
     detailsAds: undefined;
     createMyAds: undefined;
-    detailsMyAds: undefined;
-    editAds: undefined;
-    adsPreview: {product: ProductDTO};
+    detailsMyAds: { product: ProductDTO };
+    editAds: { product: ProductDTO };
+    adsPreview: { product: ProductDTO };
 }
 
 export type AppNavigatorRoutesApp = BottomTabNavigationProp<AppRoutes>;

@@ -408,7 +408,6 @@ export function CreateMyAds() {
                                 render={({ field: { onChange, value } }) => (
                                     <FormControl isInvalid={!!errors.payment_methods?.message}>
                                         <PaymentMethods
-
                                             defaultValue={paymentSelected}
                                             onChange={values => onChange(values)}
                                         />

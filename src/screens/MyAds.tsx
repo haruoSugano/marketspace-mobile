@@ -1,115 +1,86 @@
-import { Box, FlatList, HStack, Select, Text, VStack } from "native-base";
-import { Plus, CaretUp, CaretDown } from "phosphor-react-native";
-import { useState } from "react";
-import { ImageSourcePropType, Platform, TouchableOpacity } from "react-native";
-import testeImage from "@assets/Image.png";
-import { Item } from "@components/Item";
+import { useEffect, useState } from "react";
+import { Box, FlatList, HStack, Select, Text, VStack, useToast } from "native-base";
+import { Platform, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { AppNavigatorRoutesApp } from "@routes/app.routes";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type Props = {
-    name: string;
-    uri: ImageSourcePropType | null;
-    price: number;
-    source: ImageSourcePropType;
-    is_new: boolean;
-    is_activated: boolean;
-}
+import { Plus, CaretUp, CaretDown } from "phosphor-react-native";
+import { Item } from "@components/Item";
+import { AppNavigatorRoutesApp } from "@routes/app.routes";
+import { storageAuthTokenGet } from "@storage/storageAuthToken";
+import { ProductDTO } from "@dtos/ProductDTO";
+import { AppError } from "@utils/AppError";
+import { api } from "@services/api";
+import { Loading } from "@components/Loading";
 
 export function MyAds() {
     const navigation = useNavigation<AppNavigatorRoutesApp>();
-    const [status, setStatus] = useState("");
-    const [products, setProducts] = useState<Props[]>([
-        {
-            name: "tenis vermelho",
-            uri: null,
-            price: 59.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: true,
-        },
-        {
-            name: "tenis azul",
-            uri: null,
-            price: 120.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: false,
-            is_activated: true,
-        },
-        {
-            name: "tenis amarelo",
-            uri: null,
-            price: 160.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: true,
-        },
-        {
-            name: "tenis verde",
-            uri: null,
-            price: 350.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: false,
-        },
-        {
-            name: "tenis roxo",
-            uri: null,
-            price: 1000.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: true,
-        },
-        {
-            name: "tenis preto",
-            uri: null,
-            price: 2500.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: true,
-        },
-        {
-            name: "tenis preto e ranco",
-            uri: null,
-            price: 1000.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: false,
-        },
-        {
-            name: "tenis marinho",
-            uri: null,
-            price: 2500.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: false,
-        },
-        {
-            name: "tenis preto e dfa",
-            uri: null,
-            price: 1000.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: true,
-        },
-        {
-            name: "tenis adf",
-            uri: null,
-            price: 2500.90,
-            source: testeImage as ImageSourcePropType,
-            is_new: true,
-            is_activated: false,
-        },
-    ]);
+    const toast = useToast();
+    const [isLoading, setIsLoading] = useState(false);
+    const [status, setStatus] = useState("Todos");
+    const [products, setProducts] = useState<ProductDTO[]>([]);
+    const [allProducts, setAllProducts] = useState<ProductDTO[]>([]);
 
-    function handleNavigateDetailMyAds() {
-        navigation.navigate("detailsMyAds");
+    function handleNavigateDetailMyAds(product: ProductDTO) {
+        navigation.navigate("detailsMyAds", { product });
     }
 
     function handleNavigateCreateMyAds() {
         navigation.navigate("createMyAds");
     }
+
+    function handleSelectedStatus(status: string) {
+        switch (status) {
+            case "all":
+                setProducts(allProducts);
+                setStatus("Todos")
+                break;
+            case "active":
+                const productActive = allProducts.filter(product => product.is_active === true);
+
+                setProducts(productActive);
+                setStatus("Ativos");
+                break;
+            case "inactive":
+                const productInactive = allProducts.filter(product => product.is_active === false);
+
+                setProducts(productInactive);
+                setStatus("Inativos");
+                break;
+            default:
+                break;
+        }
+    }
+
+    async function fetchProducts() {
+        try {
+            setIsLoading(true);
+            const { token } = await storageAuthTokenGet();
+
+            const response = await api.get(`/users/products`,
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+
+            setProducts(response.data);
+            setAllProducts(response.data);
+        } catch (error) {
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível carregar os produtos";
+
+            toast.show({
+                title,
+                placement: "top",
+                bgColor: "red.500"
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchProducts();
+        setProducts(products)
+    }, []);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -125,8 +96,8 @@ export function MyAds() {
                 </HStack>
 
                 <HStack mt={6} justifyContent="space-between" alignItems="center">
-                    <Text>
-                        9 anúncios
+                    <Text fontFamily="heading">
+                        {products.length} anúncios
                     </Text>
 
                     <Box>
@@ -136,17 +107,17 @@ export function MyAds() {
                             height={30}
                             fontFamily="body"
                             accessibilityLabel="Todos"
-                            placeholder="Todos"
+                            placeholder={status}
                             _selectedItem={{
                                 bg: "gray.500"
                             }}
-                            onValueChange={itemValue => setStatus(itemValue)}
+                            onValueChange={itemValue => handleSelectedStatus(itemValue)}
                             dropdownIcon={<CaretDown size={18} />}
                             dropdownOpenIcon={<CaretUp size={18} />}
                         >
-                            <Select.Item label="Todos" value="Todos" />
-                            <Select.Item label="Ativos" value="Ativos" />
-                            <Select.Item label="Inativos" value="Inativos" />
+                            <Select.Item label="Todos" value="all" />
+                            <Select.Item label="Ativos" value="active" />
+                            <Select.Item label="Inativos" value="inactive" />
                         </Select>
                     </Box>
                 </HStack>
@@ -155,20 +126,23 @@ export function MyAds() {
                     <FlatList
                         columnWrapperStyle={{ justifyContent: "space-between" }}
                         data={products}
-                        keyExtractor={item => item.name}
+                        keyExtractor={item => item.id as string}
                         renderItem={({ item }) => (
                             <Box>
-                                <TouchableOpacity onPress={handleNavigateDetailMyAds}>
-                                    <Item
-                                        uri={item.uri}
-                                        name={item.name}
-                                        price={item.price}
-                                        is_new={item.is_new}
-                                        source={item.source}
-                                        is_activated={item.is_activated}
-                                        alt="foto"
-                                    />
-                                </TouchableOpacity>
+                                {
+                                    isLoading ? <Loading /> :
+                                        <TouchableOpacity onPress={() => handleNavigateDetailMyAds(item)}>
+                                            <Item
+                                                key={item.id}
+                                                uri={null}
+                                                name={item.name}
+                                                price={item.price}
+                                                is_new={item.is_new}
+                                                is_activated={item.is_active}
+                                                source={{ uri: `${api.defaults.baseURL}/images/${item.product_images[0].path}` }}
+                                            />
+                                        </TouchableOpacity>
+                                }
                             </Box>
                         )}
                         maxHeight={Platform.OS === "android" ? 540 : 430}
