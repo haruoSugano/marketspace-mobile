@@ -410,6 +410,7 @@ export function CreateMyAds() {
                                         <PaymentMethods
                                             defaultValue={paymentSelected}
                                             onChange={values => onChange(values)}
+                                            value={value}
                                         />
 
                                         <FormControl.ErrorMessage>

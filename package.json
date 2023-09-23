@@ -24,7 +24,7 @@
     "expo-status-bar": "~1.4.4",
     "expo-system-ui": "~2.2.1",
     "expo-web-browser": "~12.1.1",
-    "native-base": "^3.4.28",
+    "native-base": "^3.3",
     "phosphor-react-native": "^1.1.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",

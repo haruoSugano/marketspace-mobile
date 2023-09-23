@@ -12,6 +12,7 @@ import { CreateMyAds } from "@screens/CreateMyAds";
 import { DetailsMyAds } from "@screens/DetailsMyAds";
 import { EditAds } from "@screens/EditAds";
 import { AdsPreview } from "@screens/AdsPreview";
+import { EditAdsPreview } from "@screens/EditAdsPreview";
 import { useAuth } from "@hooks/useAuth";
 import { ProductDTO } from "@dtos/ProductDTO";
 
@@ -24,6 +25,7 @@ type AppRoutes = {
     detailsMyAds: { product: ProductDTO };
     editAds: { product: ProductDTO };
     adsPreview: { product: ProductDTO };
+    editAdsPreview: { product: ProductDTO, deleteImages: any[], updateImages: any[]};
 }
 
 export type AppNavigatorRoutesApp = BottomTabNavigationProp<AppRoutes>;
@@ -83,7 +85,6 @@ export function AppRoutes() {
                 }}
             />
 
-
             <Screen
                 name="detailsAds"
                 component={DetailsAds}
@@ -123,6 +124,15 @@ export function AppRoutes() {
             <Screen
                 name="adsPreview"
                 component={AdsPreview}
+                options={{
+                    tabBarStyle: { display: "none" },
+                    tabBarButton: () => null
+                }}
+            />
+
+            <Screen
+                name="editAdsPreview"
+                component={EditAdsPreview}
                 options={{
                     tabBarStyle: { display: "none" },
                     tabBarButton: () => null

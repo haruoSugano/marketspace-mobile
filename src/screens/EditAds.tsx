@@ -1,19 +1,24 @@
 import { useState } from "react";
-import { Input as InputNativeBase, HStack, Text, VStack, TextArea, Box, Radio, Stack, ScrollView, FormControl } from "native-base";
+import { Input as InputNativeBase, HStack, Text, VStack, TextArea, Box, Radio, Stack, ScrollView, FormControl, useToast, Image } from "native-base";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
-import { Plus } from "phosphor-react-native";
+import { Plus, XCircle } from "phosphor-react-native";
 import { Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { Header } from "@components/Header";
 import { SmallButton } from "@components/SmallButton";
 import { Trade } from "@components/Trade";
 import { PaymentMethods } from "@components/Payments";
+import { ProductDTO } from "@dtos/ProductDTO";
+
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import { api } from "@services/api";
 
 type FormDataProps = {
     name: string;
@@ -25,33 +30,145 @@ type FormDataProps = {
     user_id: string;
 }
 
+type DeleteImageProps = {
+    id: string;
+}
+
+type RouteParamsProps = {
+    product: ProductDTO;
+}
+
 const createAdsSchema = yup.object({
     name: yup.string().required("Informe o nome do anúncio."),
     description: yup.string().required("Digite a descrição deste produto"),
     is_new: yup.boolean().required("Informe a codição deste produto"),
     price: yup.number().required("Informe o preço deste anuncio").typeError("Digite um valor numérico"),
-    payment_methods: yup.array().min(1, "Informe a forma de pagamento").required("Informe a forma de pagamento"),
 });
 
 export function EditAds() {
     const navigation = useNavigation<AppNavigatorRoutesApp>();
+    const route = useRoute();
+    const toast = useToast();
+
+    const { product } = route.params as RouteParamsProps;
+
+    const [fileExtension, setFileExtension] = useState<string | undefined>("");
+    const [paymentSelected, setPaymentSelected] = useState<string[]>(product.payment_methods);
+    const [productImages, setProductImages] = useState<any[]>(product.product_images);
+    const [imagesDeletedWillBeDatabase, setImagesDeletedWillBeDatabase] = useState<DeleteImageProps[]>([]);
+    const [updateProductImages, setUpdateProductImages] = useState<any[]>([]);
+
     const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
-        resolver: yupResolver(createAdsSchema)
+        resolver: yupResolver(createAdsSchema),
+        defaultValues: {
+            name: product.name,
+            description: product.description,
+            is_new: product.is_new ? true : false,
+            price: product.price,
+            accept_trade: product.accept_trade,
+        }
     });
 
-    const [paymentSelected, setPaymentSelected] = useState<string[]>([]);
-    const [images, setImages] = useState([]);
+
 
     function handleNavigateMyAds() {
-        navigation.navigate("myAds");
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "myAds" }]
+        });
     }
 
-    function handleNavigateAdsPreview() {
-        navigation.navigate("adsPreview");
+    function handleNavigateAdsPreview({ name, description, is_new, price, accept_trade }: FormDataProps) {
+
+        if(paymentSelected.length === 0) {
+            return toast.show({
+                title: "Informe por favor a forma de pagamento",
+                placement: "top",
+                bgColor: "red.500"
+            });
+        }
+
+        const updatedProductData = {
+            ...product,
+            name: name,
+            description: description,
+            is_new: is_new,
+            price: price,
+            accept_trade: accept_trade,
+            payment_methods: paymentSelected,
+            product_images: productImages
+        };
+
+        const productImagesData = updateProductImages.map((productImage, key) => {
+            return {
+                name: `${key + 1}-${name}.${fileExtension}`.toLocaleLowerCase(),
+                uri: productImage.uri,
+                type: `${productImage.type}/${fileExtension}`
+            }
+        });
+
+        navigation.navigate("editAdsPreview", {
+            product: updatedProductData,
+            deleteImages: imagesDeletedWillBeDatabase,
+            updateImages: productImagesData
+        });
     }
 
-    async function handleEditAds(data: FormDataProps) {
-        console.log(data)
+    async function handleProductImagesSelect() {
+        const productImage = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
+            aspect: [4, 4],
+            allowsEditing: true
+        });
+
+        if (productImage.canceled) {
+            return;
+        }
+
+        const productImageAssets = productImage.assets[0];
+
+        if (productImageAssets.uri) {
+            const photoInfo = await FileSystem.getInfoAsync(productImageAssets.uri);
+
+            if (photoInfo.size && (photoInfo.size / 1024 / 1024) > 1) {
+                return toast.show({
+                    title: "Essa imagem é muito grande. Escolha uma de até 5MB",
+                    placement: "top",
+                    bgColor: "red.500"
+                });
+            }
+
+            const productImageExtension = productImageAssets.uri.split('.').pop();
+
+            if (productImages.length > 2) {
+                return toast.show({
+                    title: "Só é possível adicionar 3 imagens.",
+                    placement: "top",
+                    bgColor: "red.500"
+                });
+            }
+
+            setFileExtension(productImageExtension);
+            setProductImages(productImage => [...productImage, productImageAssets]);
+            setUpdateProductImages(productImage => [...productImage, productImageAssets]);
+        }
+    }
+
+    async function handleDeleteProductImage(path: string, uri: string) {
+        if (!path) {
+            setProductImages(productImages.filter(productImage => productImage.uri !== uri));
+            return;
+        }
+
+        const deletedImage = await productImages.find((image) => image.path === path);
+
+        if (deletedImage) {
+            const productImagesUpdated = productImages.filter(productImage => productImage.path !== path);
+
+            setProductImages(productImagesUpdated);
+            setImagesDeletedWillBeDatabase(imagesDeletedWillBeDatabase => [...imagesDeletedWillBeDatabase, deletedImage.id]);
+        }
     }
 
     return (
@@ -78,21 +195,77 @@ export function EditAds() {
 
                     <HStack mt={3}>
                         {
-                            images.length < 2 ?
-                                <TouchableOpacity
-                                    style={{
-                                        backgroundColor: "#D9D8DA",
-                                        width: 100,
-                                        height: 100,
-                                        borderRadius: 6,
-                                        alignItems: "center",
-                                        justifyContent: "center"
-                                    }}
-                                >
-                                    <Plus color="gray" />
-                                </TouchableOpacity>
+                            productImages.length === 3 ?
+                                productImages.map((productImage, key) => {
+                                    return (
+                                        <HStack key={key}>
+                                            <Image
+                                                w={100}
+                                                h={100}
+                                                borderRadius={6}
+                                                source={productImage.path ? { uri: `${api.defaults.baseURL}/images/${productImage.path}` } : productImage}
+                                                alt="Imagem do produto"
+                                                mr={2}
+                                            />
+                                            <TouchableOpacity
+                                                style={{
+                                                    position: "absolute",
+                                                    marginLeft: "65%",
+                                                    marginTop: 5
+                                                }}
+                                                onPress={() => handleDeleteProductImage(productImage.path, productImage.uri)}
+                                            >
+                                                <XCircle size={24} color="white" />
+                                            </TouchableOpacity>
+                                        </HStack>
+                                    )
+                                })
 
-                                : null
+                                :
+
+                                <HStack>
+                                    {
+                                        productImages.map((productImage, key) => {
+                                            return (
+                                                <HStack key={key}>
+                                                    <Image
+                                                        w={100}
+                                                        h={100}
+                                                        borderRadius={6}
+                                                        source={productImage.path ? { uri: `${api.defaults.baseURL}/images/${productImage.path}` } : productImage}
+                                                        alt="Imagem do produto"
+                                                        mr={2}
+                                                    />
+                                                    <TouchableOpacity
+                                                        style={{
+                                                            position: "absolute",
+                                                            marginLeft: "65%",
+                                                            marginTop: 5
+                                                        }}
+                                                        onPress={() => handleDeleteProductImage(productImage.path, productImage.uri)}
+                                                    >
+                                                        <XCircle size={24} color="white" />
+                                                    </TouchableOpacity>
+                                                </HStack>
+                                            )
+                                        })
+                                    }
+
+                                    <TouchableOpacity
+                                        style={{
+                                            backgroundColor: "#D9D8DA",
+                                            width: 100,
+                                            height: 100,
+                                            borderRadius: 6,
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        }}
+                                        onPress={handleProductImagesSelect}
+                                    >
+                                        <Plus color="gray" />
+                                    </TouchableOpacity>
+                                </HStack>
+
                         }
                     </HStack>
 
@@ -170,6 +343,7 @@ export function EditAds() {
                                         <Radio.Group
                                             name="is_new"
                                             onChange={onChange}
+                                            value={value.toString()}
                                         >
                                             <Stack
                                                 direction={{
@@ -247,23 +421,16 @@ export function EditAds() {
                                 )}
                             />
 
-                            <Controller
-                                control={control}
-                                name="payment_methods"
-                                render={({ field: { onChange, value } }) => (
-                                    <FormControl isInvalid={!!errors.payment_methods?.message}>
-                                        <PaymentMethods
-                                            defaultValue={paymentSelected}
-                                            onChange={values => onChange(values)}
-                                        />
 
-                                        <FormControl.ErrorMessage>
-                                            {errors.payment_methods?.message}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                )}
-                            />
-
+                            <FormControl isInvalid={paymentSelected.length === 0}>
+                                <PaymentMethods
+                                    defaultValue={paymentSelected}
+                                    onChange={(values: string[]) => setPaymentSelected(values)}
+                                />
+                                <FormControl.ErrorMessage>
+                                    {"Informe a forma de pagamento"}
+                                </FormControl.ErrorMessage>
+                            </FormControl>
                         </Box>
                     </VStack>
                 </VStack>
@@ -285,7 +452,7 @@ export function EditAds() {
                 />
 
                 <SmallButton
-                    onPress={handleSubmit(handleEditAds)}
+                    onPress={handleSubmit(handleNavigateAdsPreview)}
                     title="Avançar"
                     bgColor="gray.100"
                     textColor="white"

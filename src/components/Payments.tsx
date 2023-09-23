@@ -1,10 +1,10 @@
 import { VStack, Text, Box, Checkbox } from "native-base";
-import { ICheckboxGroupProps } from "native-base/lib/typescript/components/primitives/Checkbox/types";
+import { ICheckboxGroupProps, ICheckboxValue } from "native-base/lib/typescript/components/primitives/Checkbox/types";
 
 type Props = ICheckboxGroupProps & {
 };
 
-export function PaymentMethods({...rest}:Props) {
+export function PaymentMethods({ ...rest }: Props) {
     return (
         <VStack>
             <Text fontFamily="heading" mt={1}>
@@ -14,7 +14,7 @@ export function PaymentMethods({...rest}:Props) {
                 <Checkbox.Group
                     {...rest}
                 >
-                    <Checkbox value="boleto" my={1}>
+                    <Checkbox isChecked={true} value="boleto" my={1}>
                         Boleto
                     </Checkbox>
                     <Checkbox value="pix" my={1}>

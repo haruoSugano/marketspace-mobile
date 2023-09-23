@@ -22,7 +22,11 @@ export function MyAds() {
     const [allProducts, setAllProducts] = useState<ProductDTO[]>([]);
 
     function handleNavigateDetailMyAds(product: ProductDTO) {
-        navigation.navigate("detailsMyAds", { product });
+        const paymentMethods = product.payment_methods.map(method => method.key);
+
+        const productDataFormated = { ...product, payment_methods: paymentMethods };
+
+        navigation.navigate("detailsMyAds", { product: productDataFormated });
     }
 
     function handleNavigateCreateMyAds() {

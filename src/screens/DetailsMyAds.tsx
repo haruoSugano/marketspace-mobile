@@ -14,6 +14,7 @@ import { ProductDTO } from "@dtos/ProductDTO";
 import { useAuth } from "@hooks/useAuth";
 
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
+import { AppError } from "@utils/AppError";
 
 const { width } = Dimensions.get('window');
 
@@ -85,7 +86,39 @@ export function DetailsMyAds() {
 
             handleNavigateMyAds();
         } catch (error) {
-            console.log(error)
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível efetuar essa ação.";
+
+            toast.show({
+                title,
+                placement: "top",
+                bgColor: "red.500"
+            });
+        }
+    }
+
+    async function handleDeleteAd() {
+        try {
+            const { token } = await storageAuthTokenGet();
+
+            await api.delete(`/products/${product.id}`, { headers: { "Authorization": `Bearer ${token}` } });
+
+            toast.show({
+                title: "Seu anúncio foi excluído com sucesso.",
+                placement: "top",
+                bgColor: "green.500"
+            });
+
+            handleNavigateMyAds();
+        } catch (error) {
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível deletar o produto.";
+
+            toast.show({
+                title,
+                placement: "top",
+                bgColor: "red.500"
+            });
         }
     }
 
@@ -145,7 +178,7 @@ export function DetailsMyAds() {
                             product?.payment_methods.map((typePayment, key) => {
                                 return <FormPayment
                                     key={key}
-                                    payment={typePayment.key}
+                                    payment={typePayment}
                                 />
                             })
                         }
@@ -166,6 +199,7 @@ export function DetailsMyAds() {
                         textColor="gray.100"
                         title="Excluir anúncio"
                         icon="DELETE"
+                        onPress={handleDeleteAd}
                     />
                 </VStack>
             </VStack>

@@ -100,8 +100,7 @@ export function Home() {
                     name: product.name,
                     price: product.price,
                     is_new: product.is_new,
-                    path: product.product_images[0].path,
-                    token
+                    path: product.product_images[0].path
                 }
             });
 
