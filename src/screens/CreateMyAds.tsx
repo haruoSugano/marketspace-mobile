@@ -19,6 +19,8 @@ import { PaymentMethods } from "@components/Payments";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { ProductDTO } from "@dtos/ProductDTO";
+import { FormatInputNameImage, FormatInputPrice } from "@utils/Function";
+import { AppError } from "@utils/AppError";
 
 type FormDataProps = {
     name: string;
@@ -48,7 +50,6 @@ export function CreateMyAds() {
     const { control, reset, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
         resolver: yupResolver(createAdsSchema)
     });
-
 
     function handleNavigateMyAds() {
         navigation.navigate("myAds");
@@ -125,7 +126,7 @@ export function CreateMyAds() {
 
             productImageFile = productImages.map((productImage, key) => {
                 return {
-                    name: `${key + 1}-${name}.${fileExtension}`.toLocaleLowerCase(),
+                    name: `${key + 1}-${FormatInputNameImage(name)}.${fileExtension}`.toLocaleLowerCase(),
                     uri: productImage.uri,
                     type: `${productImage.type}/${fileExtension}`
                 }
@@ -135,7 +136,7 @@ export function CreateMyAds() {
                 name,
                 description,
                 is_new,
-                price,
+                price: FormatInputPrice(price),
                 accept_trade,
                 payment_methods,
                 product_images: productImageFile
@@ -143,7 +144,14 @@ export function CreateMyAds() {
 
             navigation.navigate("adsPreview", { product: productData });
         } catch (error) {
-            console.log(error)
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível publicar o produto.";
+
+            toast.show({
+                title,
+                placement: "top",
+                bgColor: "red.500"
+            });
         } finally {
             setIsLoading(false);
         }

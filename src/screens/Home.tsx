@@ -34,6 +34,7 @@ type ProductProps = {
     name: string;
     price: number;
     is_new: boolean;
+    is_active: boolean;
     path: string;
     token: string;
 }
@@ -86,23 +87,24 @@ export function Home() {
         setPaymentSelected(selectedPayment);
     };
 
-    async function fetchProducts() {
+    async function fetchMyProducts() {
         try {
             const { token } = await storageAuthTokenGet();
 
-            const response = await api.get(`/users/products`,
-                { headers: { "Authorization": `Bearer ${token}` } }
-            );
+            const responseAllProducts = await api.get(`/products`, { headers: { "Authorization": `Bearer ${token}` } });
 
-            const formatProductsData = response.data.map((product: ProductDTO) => {
+            const formatProductsData = responseAllProducts.data.map((product: ProductDTO) => {
                 return {
                     id: product.id,
                     name: product.name,
                     price: product.price,
                     is_new: product.is_new,
+                    is_active: product.is_active,
                     path: product.product_images[0].path
                 }
             });
+
+            console.log(responseAllProducts.data);
 
             setProducts(formatProductsData);
         } catch (error) {
@@ -118,7 +120,7 @@ export function Home() {
     }
 
     useEffect(() => {
-        fetchProducts();
+        fetchMyProducts();
     }, []);
 
     return (
@@ -133,7 +135,9 @@ export function Home() {
                     Seus produtos anunciados para venda
                 </Text>
 
-                <HomeSell />
+                <HomeSell 
+                    quantity={products.filter(product => product.is_active).length}
+                />
 
                 <Text mt={4}>
                     Compre produtos variados

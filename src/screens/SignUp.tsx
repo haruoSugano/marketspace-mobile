@@ -20,6 +20,7 @@ import { InputPassword } from "@components/InputPassword";
 import { Button } from "@components/Button";
 import { ImageSourcePropType } from "react-native";
 import { AppError } from "@utils/AppError";
+import { FormatTelephone } from "@utils/Function";
 
 type FormDataProps = {
     name: string;
@@ -33,7 +34,7 @@ type FormDataProps = {
 const signUpSchema = yup.object({
     name: yup.string().required("Informe o nome."),
     email: yup.string().required("Informe o e-mail.").email("E-mail inválido."),
-    tel: yup.string().required("Informe o telefone."),
+    tel: yup.string().required("Informe o numero do celular.").min(11, "Informe o número do celular."),
     password: yup.string().required("Informe a senha.").min(6, "A senha deve ter pelo menos 6 digitos."),
     passwordConfirm: yup.string().required("Confirme a senha.").oneOf([yup.ref('password'), ""], "A confirmação da senha não confere")
 });
@@ -47,6 +48,7 @@ export function SignUp() {
         resolver: yupResolver(signUpSchema)
     });
     const [avatarProfile, setAvatarProfile] = useState<any>();
+    const [telephone, setTelephone] = useState<string>("");
 
     function handleGoBack() {
         navigation.goBack();
@@ -209,9 +211,11 @@ export function SignUp() {
                             }}
                             render={({ field: { onChange, value } }) => (
                                 <Input
-                                    placeholder="Telefone"
+                                    placeholder="(11)99999-9999"
                                     errorMessage={errors.tel?.message}
-                                    onChangeText={onChange}
+                                    onChangeText={(phone) => {
+                                        onChange(FormatTelephone(phone))
+                                    }}
                                     value={value}
                                 />
                             )}

@@ -75,7 +75,7 @@ export function EditAdsPreview() {
                 });
     
                 formDataProductImage.append('product_id', product.id as string);
-                console.log(formDataProductImage)
+
                 await api.post("/products/images", formDataProductImage, {
                     headers: { "Content-Type": "multipart/form-data" }
                 });

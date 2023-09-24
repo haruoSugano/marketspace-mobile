@@ -19,6 +19,7 @@ import { ProductDTO } from "@dtos/ProductDTO";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { api } from "@services/api";
+import { FormatInputNameImage } from "@utils/Function";
 
 type FormDataProps = {
     name: string;
@@ -69,8 +70,6 @@ export function EditAds() {
         }
     });
 
-
-
     function handleNavigateMyAds() {
         navigation.reset({
             index: 0,
@@ -101,7 +100,7 @@ export function EditAds() {
 
         const productImagesData = updateProductImages.map((productImage, key) => {
             return {
-                name: `${key + 1}-${name}.${fileExtension}`.toLocaleLowerCase(),
+                name: `${key + 1}-${FormatInputNameImage(name)}.${fileExtension}`.toLocaleLowerCase(),
                 uri: productImage.uri,
                 type: `${productImage.type}/${fileExtension}`
             }

@@ -5,11 +5,18 @@ import { Tag, ArrowRight } from "phosphor-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
 
-export function HomeSell() {
+type Props = {
+    quantity: number;
+}
+
+export function HomeSell({ quantity }: Props) {
     const navigation = useNavigation<AppNavigatorRoutesApp>();
 
     function handleGoMyAds() {
-        navigation.navigate("myAds");
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "myAds" }]
+        });
     }
 
     return (
@@ -31,7 +38,7 @@ export function HomeSell() {
 
                 <VStack>
                     <Heading fontSize="lg" fontFamily="heading">
-                        4
+                        {quantity}
                     </Heading>
                     <Text fontSize="xs" fontFamily="body">
                         anúncios ativos

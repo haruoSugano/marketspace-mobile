@@ -66,7 +66,7 @@ export function Item({ uri = null, price, name, is_new, is_activated = true, ...
                         R$
                     </Text>
                     <Text fontFamily="heading" fontSize="lg">
-                        {price}
+                        {(price).toFixed(2)}
                     </Text>
                 </HStack>
             </VStack>

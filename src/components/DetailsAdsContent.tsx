@@ -47,7 +47,7 @@ export function DetailsAdsContent({ uriUserPhoto, name, is_new, product, price, 
 
                 <Text fontFamily="heading" fontSize="lg" color="blue.light">
                     <Text fontFamily="heading" fontSize="sm">R$</Text>
-                    {price ? (price).toString() : "Valor não definido"}
+                    {price ? (price).toFixed(2) : "Valor não definido"}
                 </Text>
             </HStack>
 

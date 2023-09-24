@@ -74,7 +74,10 @@ export function AdsPreview() {
                 bgColor: "green.500"
             });
 
-            navigation.navigate("myAds");
+            navigation.reset({
+                index: 0,
+                routes: [{ name: "myAds" }]
+            });
         } catch (error) {
             const isAppError = error instanceof AppError;
             const title = isAppError ? error.message : "Não foi possível publicar o produto.";
