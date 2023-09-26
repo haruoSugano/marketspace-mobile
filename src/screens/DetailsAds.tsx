@@ -1,73 +1,61 @@
-import { Box, Button, FlatList, HStack, Image, Text, VStack } from "native-base";
+import { Box, Button, FlatList, HStack, Image, Text, VStack, useToast } from "native-base";
 import { ArrowLeft, WhatsappLogo } from "phosphor-react-native";
-import { Dimensions, ImageSourcePropType, TouchableOpacity } from "react-native";
+import { Dimensions, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import testeImage from "@assets/Image.png";
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormPayment } from "@components/FormPayment";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
 import { DetailsAdsContent } from "@components/DetailsAdsContent";
+import { AppError } from "@utils/AppError";
+import { api } from "@services/api";
+import { FormatInputPrice } from "@utils/Function";
+import { DetailsProductDTO } from "@dtos/DetailsProductDTO";
 
 const { width } = Dimensions.get('window');
 
-type Props = {
-    id: string;
-    url: ImageSourcePropType;
-}
-
-type FormPaymentProps = {
-    id: string;
-    type: string;
+type RouteParamsProps = {
+    product: DetailsProductDTO;
 }
 
 export function DetailsAds() {
     const navigation = useNavigation<AppNavigatorRoutesApp>();
-    const [productImages, setProductImages] = useState<Props[]>([
-        {
-            id: "1",
-            url: testeImage as ImageSourcePropType
-        },
-        {
-            id: "2",
-            url: testeImage as ImageSourcePropType
-        },
-        {
-            id: "3",
-            url: testeImage as ImageSourcePropType
-        }
-    ]);
+    const route = useRoute();
+    const toast = useToast();
 
-    const [formPayment, setFormPayment] = useState<FormPaymentProps[]>([
-        {
-            id: "1",
-            type: "Boleto"
-        },
-        {
-            id: "2",
-            type: "Pix"
-        },
-        {
-            id: "3",
-            type: "Dinheiro"
-        },
-        {
-            id: "4",
-            type: "Cartão de Crédito"
-        },
-        {
-            id: "5",
-            type: "Depósito Bancário"
-        },
-    ]);
+    const { product } = route.params as RouteParamsProps;
+
+    const [productData, setProductData] = useState<DetailsProductDTO>(product);
 
     function handleGoHome() {
-        navigation.navigate("home");
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "home" }]
+        });
     }
 
+    async function fetchAdDetails() {
+        try {
+            setProductData(product);
+        } catch (error) {
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível carregar os detalhes do produto.";
+
+            toast.show({
+                title,
+                placement: "top",
+                bgColor: "red.500"
+            });
+        } 
+    }
+
+    useEffect(() => {
+        fetchAdDetails();
+    }, []);
+   
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <VStack>
@@ -78,10 +66,10 @@ export function DetailsAds() {
                 </HStack>
 
                 <FlatList
-                    data={productImages}
+                    data={productData.product_images}
                     renderItem={({ item }) => (
                         <Image
-                            source={item.url}
+                            source={{ uri: `${api.defaults.baseURL}/images/${item.path}` }}
                             alt="foto"
                             width={width}
                             h={210}
@@ -94,29 +82,25 @@ export function DetailsAds() {
 
                 <Box p={5}>
                     <DetailsAdsContent
-                        uriUserPhoto={defaultUserPhotoImg}
-                        name="Helio Haruo"
-                        is_new={true}
-                        product="Bicicleta"
-                        price={120.00}
-                        description="Lorem Ipsum is simply dummy text of the printing and
-                typesetting industry. Lorem Ipsum has been
-                typesetting industry. Lorem Ipsum has been
-                typesetting industry. Lorem Ipsum has been
-                typesetting industry. Lorem Ipsum has been"
-                        exchange={true}
+                        uriUserPhoto={productData.user.avatar ? { uri: `${api.defaults.baseURL}/images/${productData.user.avatar}` } : defaultUserPhotoImg}
+                        name={productData.user.name}
+                        is_new={productData.is_new}
+                        product={productData.name}
+                        price={FormatInputPrice(productData.price)}
+                        description={productData.description}
+                        exchange={productData.accept_trade}
                     />
 
-                    <VStack mt={2}>
+                    <VStack mt={2} h={230}>
                         <Text fontFamily="heading">
                             Meios de pagamento:
                         </Text>
 
                         <FlatList
-                            data={formPayment}
+                            data={productData.payment_methods}
                             renderItem={({ item }) => (
                                 <FormPayment
-                                    payment={item.type}
+                                    payment={item.key}
                                 />
                             )}
                         />
@@ -128,7 +112,7 @@ export function DetailsAds() {
                     alignItems="center"
                     alignSelf="center"
                     bg="white"
-                    height="8%"
+                    height="10%"
                     width="full"
                     p={4}
                 >
@@ -138,11 +122,11 @@ export function DetailsAds() {
                         </Text>
 
                         <Text fontSize="lg" fontFamily="heading">
-                            120,00
+                            {FormatInputPrice(productData.price)}
                         </Text>
                     </HStack>
 
-                    <Button height={9} width={150}>
+                    <Button height={8} width={150}>
                         <HStack alignItems="center">
                             <WhatsappLogo color="white" size={18} />
                             <Text color="white" ml={1}>

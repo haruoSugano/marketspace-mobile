@@ -15,17 +15,18 @@ import { AdsPreview } from "@screens/AdsPreview";
 import { EditAdsPreview } from "@screens/EditAdsPreview";
 import { useAuth } from "@hooks/useAuth";
 import { ProductDTO } from "@dtos/ProductDTO";
+import { DetailsProductDTO } from "@dtos/DetailsProductDTO";
 
 type AppRoutes = {
     home: undefined;
     myAds: undefined;
     signIn: undefined;
-    detailsAds: undefined;
+    detailsAds: { product: DetailsProductDTO };
     createMyAds: undefined;
     detailsMyAds: { product: ProductDTO };
     editAds: { product: ProductDTO };
     adsPreview: { product: ProductDTO };
-    editAdsPreview: { product: ProductDTO, deleteImages: any[], updateImages: any[]};
+    editAdsPreview: { product: ProductDTO, deleteImages: any[], updateImages: any[] };
 }
 
 export type AppNavigatorRoutesApp = BottomTabNavigationProp<AppRoutes>;

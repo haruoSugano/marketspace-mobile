@@ -18,10 +18,12 @@ import { Trade } from "@components/Trade";
 import { Controller, useForm } from "react-hook-form";
 import { PaymentMethods } from "@components/Payments";
 import { useAuth } from "@hooks/useAuth";
-import { ProductDTO } from "@dtos/ProductDTO";
 import { api } from "@services/api";
 import { AppError } from "@utils/AppError";
 import { storageAuthTokenGet } from "@storage/storageAuthToken";
+import { FormatProductData, QueryFilterProducts } from "@utils/Function";
+import { ProductDTO } from "@dtos/ProductDTO";
+import { DetailsProductDTO } from "@dtos/DetailsProductDTO";
 
 type FormDataProps = {
     name: string;
@@ -29,14 +31,14 @@ type FormDataProps = {
     payment_methods: string[];
 }
 
-type ProductProps = {
-    id: string;
-    name: string;
-    price: number;
-    is_new: boolean;
-    is_active: boolean;
-    path: string;
-    token: string;
+type OtherUserProductProps = {
+    id: string,
+    name: string,
+    price: number,
+    is_new: boolean,
+    path: string,
+    avatar: string,
+    accept_trade: boolean,
 }
 
 export function Home() {
@@ -48,12 +50,13 @@ export function Home() {
     const [showModal, setShowModal] = useState(false);
     const [isNewModal, setIsNewModal] = useState(false);
     const [isUsedModal, setIsUsedModal] = useState(false);
-    const [isNew, setIsNew] = useState<boolean>();
+    const [isNew, setIsNew] = useState<boolean | undefined>();
     const [paymentSelected, setPaymentSelected] = useState<string[]>([]);
-    const [products, setProducts] = useState<ProductProps[]>([]);
+    const [products, setProducts] = useState<DetailsProductDTO[]>([]);
+    const [myProducts, setMyProducts] = useState<ProductDTO[]>([]);
 
-    function handleNavigateDetailMyAds() {
-        navigation.navigate("detailsAds");
+    function handleNavigateDetailMyAds(productData: DetailsProductDTO) {
+        navigation.navigate("detailsAds", { product: productData });
     }
 
     function handleIsNewIsUsedCondition(is_new: boolean, condition: string) {
@@ -74,37 +77,68 @@ export function Home() {
         }
     }
 
-    async function handleApplyFilters({ name, accept_trade, payment_methods }: FormDataProps) {
-        // console.log({
-        //     name,
-        //     accept_trade,
-        //     payment_methods,
-        //     isNew
-        // });
+    function handleDisableUsedOrNewOption(disabled: boolean, options: string) {
+        switch (options) {
+            case "new":
+                setIsNewModal(disabled);
+                setIsNew(undefined);
+                break;
+            case "used":
+                setIsUsedModal(disabled);
+                setIsNew(undefined);
+                break;
+            default:
+                break;
+        }
     }
 
-    function handlePaymentSelected(selectedPayment: string[]) {
-        setPaymentSelected(selectedPayment);
-    };
+    async function handleApplyFilters({ accept_trade, payment_methods }: FormDataProps) {
+        try {
+            const { token } = await storageAuthTokenGet();
+            const query = QueryFilterProducts(isNew, accept_trade, payment_methods);
 
-    async function fetchMyProducts() {
+            const responseFilterProducts = await api.get(`/products/?${query}`,
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+
+            const formatFilteredProductsData = FormatProductData(responseFilterProducts.data);
+
+            setProducts(formatFilteredProductsData);
+            setIsNewModal(false);
+            setIsUsedModal(false);
+            setIsNew(undefined);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function handleResetFilter() {
+        const { token } = await storageAuthTokenGet();
+
+        const responseAllProducts = await api.get(`/products`, { headers: { "Authorization": `Bearer ${token}` } });
+
+        const formatProductsData = FormatProductData(responseAllProducts.data);
+
+        setProducts(formatProductsData);
+    }
+
+    async function handleFilterByProduct({ name }: FormDataProps) {
+        const { token } = await storageAuthTokenGet();
+
+        const responseProductData = await api.get(`/products/?query=${name}`, { headers: { "Authorization": `Bearer ${token}` } });
+
+        const formatProductData = FormatProductData(responseProductData.data);
+
+        setProducts(formatProductData);
+    }
+
+    async function fetchProducts() {
         try {
             const { token } = await storageAuthTokenGet();
 
             const responseAllProducts = await api.get(`/products`, { headers: { "Authorization": `Bearer ${token}` } });
 
-            const formatProductsData = responseAllProducts.data.map((product: ProductDTO) => {
-                return {
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    is_new: product.is_new,
-                    is_active: product.is_active,
-                    path: product.product_images[0].path
-                }
-            });
-
-            console.log(responseAllProducts.data);
+            const formatProductsData = FormatProductData(responseAllProducts.data);
 
             setProducts(formatProductsData);
         } catch (error) {
@@ -119,7 +153,18 @@ export function Home() {
         }
     }
 
+    async function fetchMyProducts() {
+        const { token } = await storageAuthTokenGet();
+
+        const responseAllProducts = await api.get(`/users/products`,
+            { headers: { "Authorization": `Bearer ${token}` } }
+        );
+
+        setMyProducts(responseAllProducts.data);
+    }
+
     useEffect(() => {
+        fetchProducts();
         fetchMyProducts();
     }, []);
 
@@ -135,8 +180,8 @@ export function Home() {
                     Seus produtos anunciados para venda
                 </Text>
 
-                <HomeSell 
-                    quantity={products.filter(product => product.is_active).length}
+                <HomeSell
+                    quantity={myProducts.filter(product => product.is_active).length}
                 />
 
                 <Text mt={4}>
@@ -160,7 +205,9 @@ export function Home() {
                             placeholder="Buscar anúncio"
                             InputRightElement={
                                 <HStack alignItems="center" mr={2}>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={handleSubmit(handleFilterByProduct)}
+                                    >
                                         <MagnifyingGlass size={22} />
                                     </TouchableOpacity>
                                     <Box width={0.4} height={18} bg="gray.500" mr={2} ml={2} />
@@ -169,6 +216,7 @@ export function Home() {
                                     </TouchableOpacity>
                                 </HStack>
                             }
+                            onChangeText={onChange}
                             value={value}
                         />
                     )}
@@ -203,7 +251,7 @@ export function Home() {
                                                 isNewModal ?
                                                     <Condition
                                                         condition="NOVO"
-                                                        onPress={() => setIsNewModal(false)}
+                                                        onPress={() => handleDisableUsedOrNewOption(false, "new")}
                                                     />
                                                     :
                                                     <Text
@@ -232,7 +280,7 @@ export function Home() {
                                                 isUsedModal ?
                                                     <Condition
                                                         condition="USADO"
-                                                        onPress={() => setIsUsedModal(false)}
+                                                        onPress={() => handleDisableUsedOrNewOption(false, "used")}
                                                     />
                                                     :
                                                     <Text
@@ -278,6 +326,7 @@ export function Home() {
                                         title="Resetar filtros"
                                         bgColor="gray.500"
                                         textColor="gray.100"
+                                        onPress={handleResetFilter}
                                     />
 
                                     <SmallButton
@@ -299,14 +348,14 @@ export function Home() {
                         keyExtractor={item => item.id as string}
                         renderItem={({ item }) => (
                             <Box>
-                                <TouchableOpacity onPress={handleNavigateDetailMyAds}>
+                                <TouchableOpacity onPress={() => handleNavigateDetailMyAds(item)}>
                                     <Item
-                                        uri={user.avatar ? { uri: `${api.defaults.baseURL}/images/${user.avatar}` } : defaultUserPhotoImg}
+                                        uri={item.user.avatar ? { uri: `${api.defaults.baseURL}/images/${item.user.avatar}` } : defaultUserPhotoImg}
                                         name={item.name}
                                         price={item.price}
                                         is_new={item.is_new}
                                         alt={item.name}
-                                        source={item.path ? { uri: `${api.defaults.baseURL}/images/${item.path}` } : defaultUserPhotoImg}
+                                        source={item.product_images[0].path ? { uri: `${api.defaults.baseURL}/images/${item.product_images[0].path}` } : defaultUserPhotoImg}
                                     />
                                 </TouchableOpacity>
                             </Box>
