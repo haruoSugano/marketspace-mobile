@@ -1,4 +1,5 @@
 import { Box, Button as ButtonNative, HStack, IButtonProps, Text } from "native-base";
+
 import { Power, Trash } from "phosphor-react-native";
 
 type Props = IButtonProps & {

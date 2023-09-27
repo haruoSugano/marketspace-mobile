@@ -1,4 +1,5 @@
 import { Box, HStack, Text } from "native-base";
+
 import { Bank, Barcode, CreditCard, Money, QrCode } from "phosphor-react-native";
 
 type Props = {

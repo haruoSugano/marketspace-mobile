@@ -1,6 +1,7 @@
 import { HStack, VStack, Text, Box } from "native-base";
-import { UserPhoto } from "./UserPhoto";
 import { ImageSourcePropType } from "react-native";
+
+import { UserPhoto } from "./UserPhoto";
 
 type Props = {
     uriUserPhoto: ImageSourcePropType;

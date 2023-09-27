@@ -1,6 +1,7 @@
-import { Box, HStack, Text } from "native-base";
-import { ArrowLeft, PencilSimpleLine } from "phosphor-react-native";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
+import { Box, HStack, Text } from "native-base";
+
+import { ArrowLeft } from "phosphor-react-native";
 
 type Props = TouchableOpacityProps & {
     title?: string;

@@ -1,11 +1,11 @@
 import { HStack, VStack, Text, Heading, Button as ButtonNative } from "native-base";
-import { Plus } from "phosphor-react-native";
-import { UserPhoto } from "./UserPhoto";
-
 import { useNavigation } from "@react-navigation/native";
+
+import { Plus } from "phosphor-react-native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
 import { api } from "@services/api";
 
+import { UserPhoto } from "./UserPhoto";
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
 type Props = {

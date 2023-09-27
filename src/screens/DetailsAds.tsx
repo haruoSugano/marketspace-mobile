@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { Dimensions, TouchableOpacity, Linking, Platform } from "react-native";
 import { Box, Button, FlatList, HStack, Image, Text, VStack, useToast } from "native-base";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeft, WhatsappLogo } from "phosphor-react-native";
 
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
-import { FormPayment } from "@components/FormPayment";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
+import { FormPayment } from "@components/FormPayment";
 import { DetailsAdsContent } from "@components/DetailsAdsContent";
 import { AppError } from "@utils/AppError";
-import { api } from "@services/api";
 import { FormatInputPrice } from "@utils/Function";
+import { api } from "@services/api";
 import { DetailsProductDTO } from "@dtos/DetailsProductDTO";
 
 const { width } = Dimensions.get('window');

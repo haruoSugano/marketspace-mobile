@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ScrollView, Text, VStack, Center, useToast } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
@@ -11,7 +12,6 @@ import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
 import { useAuth } from "@hooks/useAuth";
 import { AppError } from "@utils/AppError";
-import { useState } from "react";
 
 type FormData = {
     email: string,

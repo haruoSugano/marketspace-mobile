@@ -1,8 +1,8 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { FlatList, VStack, Image, Text, HStack, ScrollView, useToast } from "native-base";
 import { Dimensions, Platform, TouchableOpacity } from "react-native";
-import { ArrowLeft, PencilSimpleLine } from "phosphor-react-native";
+import { FlatList, VStack, Image, Text, HStack, ScrollView, useToast } from "native-base";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ArrowLeft, PencilSimpleLine } from "phosphor-react-native";
 
 import { DetailsAdsContent } from "@components/DetailsAdsContent";
 import { FormPayment } from "@components/FormPayment";

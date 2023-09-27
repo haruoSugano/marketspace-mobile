@@ -2,8 +2,11 @@ import { ReactNode, createContext, useEffect, useState } from "react";
 import { useToast } from "native-base";
 
 import { UserDTO } from "@dtos/UserDTO";
+
 import { api } from "@services/api";
+
 import { AppError } from "@utils/AppError";
+
 import { storageUserGet, storageUserRemove, storageUserSave } from "@storage/storageUser";
 import { storageAuthTokenGet, storageAuthTokenRemove, storageAuthTokenSave } from "@storage/storageAuthToken";
 

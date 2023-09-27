@@ -1,4 +1,5 @@
 import { HStack, Text } from "native-base";
+
 import { ArrowLeft } from "phosphor-react-native";
 
 type Props = {

@@ -3,8 +3,9 @@ import { Box, HStack, Input as NativeBaseInput, Text, FlatList, VStack, Modal, H
 import { TouchableOpacity, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { Controller, useForm } from "react-hook-form";
 import { MagnifyingGlass, Sliders } from "phosphor-react-native";
+
 
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
@@ -13,17 +14,17 @@ import { HomeSell } from "@components/HomeSell";
 import { Item } from "@components/Item";
 import { Condition } from "@components/Condition";
 import { SmallButton } from "@components/SmallButton";
-import { AppNavigatorRoutesApp } from "@routes/app.routes";
 import { Trade } from "@components/Trade";
-import { Controller, useForm } from "react-hook-form";
 import { PaymentMethods } from "@components/Payments";
+
+import { AppNavigatorRoutesApp } from "@routes/app.routes";
 import { useAuth } from "@hooks/useAuth";
 import { api } from "@services/api";
 import { AppError } from "@utils/AppError";
-import { storageAuthTokenGet } from "@storage/storageAuthToken";
 import { FormatProductData, QueryFilterProducts } from "@utils/Function";
+import { storageAuthTokenGet } from "@storage/storageAuthToken";
+
 import { ProductDTO } from "@dtos/ProductDTO";
-import { DetailsProductDTO } from "@dtos/DetailsProductDTO";
 import { ProductImageDTO } from "@dtos/ProductImageDTO";
 
 type FormDataProps = {

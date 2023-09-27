@@ -1,8 +1,10 @@
-import { HStack, Pressable, Button as ButtonNativeBase, Heading, VStack, Text, Box } from "native-base";
-import { THEME } from "@theme/index";
+import { HStack, Button as ButtonNativeBase, Heading, VStack, Text, Box } from "native-base";
+import { useNavigation } from "@react-navigation/native";
 
 import { Tag, ArrowRight } from "phosphor-react-native";
-import { useNavigation } from "@react-navigation/native";
+
+import { THEME } from "@theme/index";
+
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
 
 type Props = {

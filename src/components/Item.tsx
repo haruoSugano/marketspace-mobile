@@ -1,5 +1,6 @@
 import { Box, Image, HStack, Text, VStack, IImageProps } from "native-base";
 import { ImageSourcePropType, Platform } from "react-native";
+
 import { UserPhoto } from "./UserPhoto";
 
 type Props = IImageProps & {

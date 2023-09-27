@@ -1,5 +1,5 @@
-import { VStack, Text } from "native-base";
 import { Switch, SwitchProps } from "react-native";
+import { VStack, Text } from "native-base";
 
 type Props = SwitchProps & {
 }

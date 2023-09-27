@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ImageSourcePropType } from "react-native";
 import { Center, ScrollView, Text, VStack, useToast } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
@@ -11,14 +12,13 @@ import * as FileSystem from "expo-file-system";
 
 import { api } from "@services/api";
 
-
 import LogoImg from "@assets/logo.svg";
 
 import { Perfil } from "@components/Perfil";
 import { Input } from "@components/Input";
 import { InputPassword } from "@components/InputPassword";
 import { Button } from "@components/Button";
-import { ImageSourcePropType } from "react-native";
+
 import { AppError } from "@utils/AppError";
 import { FormatTelephone, FormatTelephoneNumber } from "@utils/Function";
 

@@ -8,13 +8,16 @@ import { AppNavigatorRoutesApp } from "@routes/app.routes";
 
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
+import { ProductDTO } from "@dtos/ProductDTO";
+
 import { FormPayment } from "@components/FormPayment";
 import { DetailsAdsContent } from "@components/DetailsAdsContent";
 import { IconButton } from "@components/IconButton";
+
 import { api } from "@services/api";
-import { ProductDTO } from "@dtos/ProductDTO";
 import { AppError } from "@utils/AppError";
 import { useAuth } from "@hooks/useAuth";
+
 import { storageAuthTokenGet } from "@storage/storageAuthToken";
 
 const { width } = Dimensions.get('window');

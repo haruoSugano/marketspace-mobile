@@ -1,8 +1,9 @@
+import { ImageSourcePropType } from "react-native";
 import { Pressable, Center, HStack, IPressableProps, Image } from "native-base";
 
 import { PencilSimpleLine } from "phosphor-react-native";
+
 import AvatarImg from "@assets/Avatar.svg";
-import { ImageSourcePropType } from "react-native";
 
 
 type Props = IPressableProps & {

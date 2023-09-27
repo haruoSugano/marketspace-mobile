@@ -1,4 +1,5 @@
 import { Button as ButtonNative, HStack, IButtonProps, Text } from "native-base";
+
 import { ArrowLeft, Tag } from "phosphor-react-native";
 
 type Props = IButtonProps & {

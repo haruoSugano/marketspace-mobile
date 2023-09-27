@@ -1,5 +1,5 @@
 import { VStack, Text, Box, Checkbox } from "native-base";
-import { ICheckboxGroupProps, ICheckboxValue } from "native-base/lib/typescript/components/primitives/Checkbox/types";
+import { ICheckboxGroupProps } from "native-base/lib/typescript/components/primitives/Checkbox/types";
 
 type Props = ICheckboxGroupProps & {
 };

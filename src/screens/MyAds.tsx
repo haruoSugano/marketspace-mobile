@@ -3,15 +3,15 @@ import { Box, FlatList, HStack, Select, Text, VStack, useToast } from "native-ba
 import { Platform, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { Plus, CaretUp, CaretDown } from "phosphor-react-native";
+
+import { Loading } from "@components/Loading";
 import { Item } from "@components/Item";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
 import { storageAuthTokenGet } from "@storage/storageAuthToken";
 import { ProductDTO } from "@dtos/ProductDTO";
 import { AppError } from "@utils/AppError";
 import { api } from "@services/api";
-import { Loading } from "@components/Loading";
 
 export function MyAds() {
     const navigation = useNavigation<AppNavigatorRoutesApp>();

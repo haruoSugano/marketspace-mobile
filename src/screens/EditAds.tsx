@@ -1,19 +1,20 @@
 import { useState } from "react";
-import { Input as InputNativeBase, HStack, Text, VStack, TextArea, Box, Radio, Stack, ScrollView, FormControl, useToast, Image } from "native-base";
-import { AppNavigatorRoutesApp } from "@routes/app.routes";
-import { Plus, XCircle } from "phosphor-react-native";
 import { Platform, TouchableOpacity } from "react-native";
+import { Input as InputNativeBase, HStack, Text, VStack, TextArea, Box, Radio, Stack, ScrollView, FormControl, useToast, Image } from "native-base";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Plus, XCircle } from "phosphor-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { AppNavigatorRoutesApp } from "@routes/app.routes";
 
 import { Header } from "@components/Header";
 import { SmallButton } from "@components/SmallButton";
 import { Trade } from "@components/Trade";
 import { PaymentMethods } from "@components/Payments";
+
 import { ProductDTO } from "@dtos/ProductDTO";
 
 import * as ImagePicker from "expo-image-picker";

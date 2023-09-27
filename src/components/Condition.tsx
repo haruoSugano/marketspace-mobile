@@ -1,11 +1,11 @@
 import { HStack, Text } from "native-base";
-import { XCircle } from "phosphor-react-native";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
+
+import { XCircle } from "phosphor-react-native";
 
 type Props = TouchableOpacityProps & {
     condition: "NOVO" | "USADO"
 }
-
 
 export function Condition({ condition, ...rest }: Props) {
     return (

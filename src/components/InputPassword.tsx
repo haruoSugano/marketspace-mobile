@@ -1,7 +1,7 @@
+import { useState } from "react";
 import { FormControl, IInputProps, Input as NativeBaseInput, Pressable } from "native-base";
 
 import { Eye, EyeSlash } from "phosphor-react-native";
-import { useState } from "react";
 
 type Props = IInputProps & {
     errorMessage?: string | null;
