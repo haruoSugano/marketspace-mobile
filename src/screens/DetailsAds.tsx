@@ -38,7 +38,17 @@ export function DetailsAds() {
     }
 
     function handleWhatsappContact() {
-        Linking.openURL(`https://wa.me/55${productData.user.tel}`).catch((error) => console.log(error))
+        try {
+            Linking.openURL(`https://wa.me/55${productData.user.tel}`);
+        } catch (error) {
+            console.log(error);
+            
+            toast.show({
+                title: "Não foi possível direcionar para este contato.",
+                placement: "top",
+                bgColor: "red.500"
+            });
+        }
     }
 
     async function fetchAdDetails() {
@@ -95,7 +105,7 @@ export function DetailsAds() {
                         exchange={productData.accept_trade}
                     />
 
-                    <VStack mt={2} mb={Platform.OS === "android" ? 0 : 4} h={Platform.OS === "android" ? 230 : 78}>
+                    <VStack mt={2} mb={Platform.OS === "android" ? 0 : 4} h={Platform.OS === "android" ? 190 : 78}>
                         <Text fontFamily="heading">
                             Meios de pagamento:
                         </Text>
