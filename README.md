@@ -84,6 +84,18 @@ Digite o comando:
 $ npm install
 ~~~
 
+### Baixe as dependências:
+
+Configure o arquivo .env
+
+~~~
+$ cp .env.copy .env
+~~~
+
+~~~
+EXPO_PUBLIC_IP_LOCAL=""
+~~~
+
 ### Execução:
 
 ~~~
