@@ -1,11 +1,11 @@
+import { useEffect, useState } from "react";
+import { Dimensions, TouchableOpacity, Linking, Platform } from "react-native";
 import { Box, Button, FlatList, HStack, Image, Text, VStack, useToast } from "native-base";
-import { ArrowLeft, WhatsappLogo } from "phosphor-react-native";
-import { Dimensions, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ArrowLeft, WhatsappLogo } from "phosphor-react-native";
 
 import defaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
-import { useEffect, useState } from "react";
 import { FormPayment } from "@components/FormPayment";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { AppNavigatorRoutesApp } from "@routes/app.routes";
@@ -29,12 +29,16 @@ export function DetailsAds() {
     const { product } = route.params as RouteParamsProps;
 
     const [productData, setProductData] = useState<DetailsProductDTO>(product);
-
+    console.log(product)
     function handleGoHome() {
         navigation.reset({
             index: 0,
             routes: [{ name: "home" }]
         });
+    }
+
+    function handleWhatsappContact() {
+        Linking.openURL(`https://wa.me/55${productData.user.tel}`).catch((error) => console.log(error))
     }
 
     async function fetchAdDetails() {
@@ -49,13 +53,13 @@ export function DetailsAds() {
                 placement: "top",
                 bgColor: "red.500"
             });
-        } 
+        }
     }
 
     useEffect(() => {
         fetchAdDetails();
     }, []);
-   
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <VStack>
@@ -72,7 +76,7 @@ export function DetailsAds() {
                             source={{ uri: `${api.defaults.baseURL}/images/${item.path}` }}
                             alt="foto"
                             width={width}
-                            h={210}
+                            h={Platform.OS === "android" ? 210 : 180}
                         />
                     )}
                     horizontal
@@ -91,7 +95,7 @@ export function DetailsAds() {
                         exchange={productData.accept_trade}
                     />
 
-                    <VStack mt={2} h={230}>
+                    <VStack mt={2} mb={Platform.OS === "android" ? 0 : 4} h={Platform.OS === "android" ? 230 : 78}>
                         <Text fontFamily="heading">
                             Meios de pagamento:
                         </Text>
@@ -126,7 +130,7 @@ export function DetailsAds() {
                         </Text>
                     </HStack>
 
-                    <Button height={8} width={150}>
+                    <Button height={10} width={150} onPress={handleWhatsappContact}>
                         <HStack alignItems="center">
                             <WhatsappLogo color="white" size={18} />
                             <Text color="white" ml={1}>

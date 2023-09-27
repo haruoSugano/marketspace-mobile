@@ -13,5 +13,7 @@ export type DetailsProductDTO = {
     user: {
         avatar: string;
         name: string;
+        tel: string;
     }
+    user_id: string;
 }

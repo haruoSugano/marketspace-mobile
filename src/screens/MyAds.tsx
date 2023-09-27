@@ -30,7 +30,10 @@ export function MyAds() {
     }
 
     function handleNavigateCreateMyAds() {
-        navigation.navigate("createMyAds");
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "createMyAds" }]
+        });
     }
 
     function handleSelectedStatus(status: string) {

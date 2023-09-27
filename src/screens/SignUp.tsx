@@ -20,7 +20,7 @@ import { InputPassword } from "@components/InputPassword";
 import { Button } from "@components/Button";
 import { ImageSourcePropType } from "react-native";
 import { AppError } from "@utils/AppError";
-import { FormatTelephone } from "@utils/Function";
+import { FormatTelephone, FormatTelephoneNumber } from "@utils/Function";
 
 type FormDataProps = {
     name: string;
@@ -90,7 +90,7 @@ export function SignUp() {
         }
     }
 
-    async function handleSignUp({ name, email, tel, password, passwordConfirm, avatar }: FormDataProps) {
+    async function handleSignUp({ name, email, tel, password }: FormDataProps) {
         try {
             setIsLoading(true);
             
@@ -111,7 +111,7 @@ export function SignUp() {
             const formData = new FormData();
             formData.append('name', name);
             formData.append('email', email);
-            formData.append('tel', tel);
+            formData.append('tel', FormatTelephoneNumber(tel));
             formData.append('password', password);
             formData.append('avatar', avatarFile);
 

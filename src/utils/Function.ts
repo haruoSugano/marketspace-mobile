@@ -63,8 +63,14 @@ export function FormatProductData(products_data: DetailsProductDTO[]) {
             product_images: product.product_images,
             user: {
                 avatar: product.user.avatar,
-                name: product.user.name
-            }
+                name: product.user.name,
+                tel: product.user.tel
+            },
+            user_id: product.user_id
         }
     });
+}
+
+export function FormatTelephoneNumber(tel: string) {
+  return tel.replace(/\D/g, '');
 }

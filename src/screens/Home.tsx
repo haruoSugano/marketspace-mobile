@@ -24,6 +24,7 @@ import { storageAuthTokenGet } from "@storage/storageAuthToken";
 import { FormatProductData, QueryFilterProducts } from "@utils/Function";
 import { ProductDTO } from "@dtos/ProductDTO";
 import { DetailsProductDTO } from "@dtos/DetailsProductDTO";
+import { ProductImageDTO } from "@dtos/ProductImageDTO";
 
 type FormDataProps = {
     name: string;
@@ -31,14 +32,19 @@ type FormDataProps = {
     payment_methods: string[];
 }
 
-type OtherUserProductProps = {
-    id: string,
-    name: string,
-    price: number,
-    is_new: boolean,
-    path: string,
-    avatar: string,
-    accept_trade: boolean,
+type ProductProps = {
+    id: string;
+    name: string;
+    description: string;
+    is_new: boolean;
+    price: number;
+    is_active: boolean;
+    accept_trade: boolean;
+    payment_methods: any[];
+    product_images: ProductImageDTO[];
+    user: {
+        avatar: string;
+    }
 }
 
 export function Home() {
@@ -52,11 +58,17 @@ export function Home() {
     const [isUsedModal, setIsUsedModal] = useState(false);
     const [isNew, setIsNew] = useState<boolean | undefined>();
     const [paymentSelected, setPaymentSelected] = useState<string[]>([]);
-    const [products, setProducts] = useState<DetailsProductDTO[]>([]);
+    const [products, setProducts] = useState<ProductProps[]>([]);
     const [myProducts, setMyProducts] = useState<ProductDTO[]>([]);
 
-    function handleNavigateDetailMyAds(productData: DetailsProductDTO) {
-        navigation.navigate("detailsAds", { product: productData });
+    async function handleNavigateDetailMyAds(productId: string) {
+        const { token } = await storageAuthTokenGet();
+        
+        const responseProductByUser = await api.get(`/products/${productId}`,
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+
+        navigation.navigate("detailsAds", { product: responseProductByUser.data });
     }
 
     function handleIsNewIsUsedCondition(is_new: boolean, condition: string) {
@@ -137,7 +149,7 @@ export function Home() {
             const { token } = await storageAuthTokenGet();
 
             const responseAllProducts = await api.get(`/products`, { headers: { "Authorization": `Bearer ${token}` } });
-
+           
             const formatProductsData = FormatProductData(responseAllProducts.data);
 
             setProducts(formatProductsData);
@@ -348,7 +360,7 @@ export function Home() {
                         keyExtractor={item => item.id as string}
                         renderItem={({ item }) => (
                             <Box>
-                                <TouchableOpacity onPress={() => handleNavigateDetailMyAds(item)}>
+                                <TouchableOpacity onPress={() => handleNavigateDetailMyAds(item.id)}>
                                     <Item
                                         uri={item.user.avatar ? { uri: `${api.defaults.baseURL}/images/${item.user.avatar}` } : defaultUserPhotoImg}
                                         name={item.name}
