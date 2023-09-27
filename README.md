@@ -85,7 +85,7 @@ Digite o comando:
 $ npm install
 ~~~
 
-### Baixe as dependências:
+### Configuração:
 
 Configure o arquivo .env
 
