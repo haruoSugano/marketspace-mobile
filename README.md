@@ -18,7 +18,8 @@
 - npm;
 - expo-cli;
 - AsyncStorage;
-- Expo GO.
+- Expo GO;
+- NativeBase.
 
 ---
 
